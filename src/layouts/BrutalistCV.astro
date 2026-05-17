@@ -1,0 +1,321 @@
+---
+import "../styles/global.css";
+import PrintBar from "../components/PrintBar.astro";
+import type { CV } from "../content";
+
+interface Props {
+  cv: CV;
+}
+
+const { cv } = Astro.props;
+const { variant, identity, headline, stats, about, experiences, projects, skills, awards, education, wakatime } = cv;
+
+// Accent color par variante
+const accent = variant === "vue" ? "#10b981" : "#3b82f6";
+const variantLabel = variant === "vue" ? "VUE / NUXT" : "REACT / NEXT";
+const pageTitle = `${identity.fullName} - ${headline.title}`;
+---
+
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={headline.tagline} />
+    <style define:vars={{ accent }}>
+      :root {
+        --ink: #0a0a0a;
+        --paper: #fef9c3;
+        --accent: var(--accent);
+        --paper-2: #fef3c7;
+      }
+      body {
+        font-family: var(--font-mono-alt);
+        background: var(--paper);
+        color: var(--ink);
+        font-feature-settings: "ss01", "ss02";
+      }
+      .display {
+        font-family: var(--font-display);
+        font-weight: 700;
+        letter-spacing: -0.01em;
+        line-height: 0.9;
+      }
+      .accent { color: var(--accent); }
+      .bg-accent { background: var(--accent); }
+      .box { border: 2px solid var(--ink); }
+      .box-thick { border: 3px solid var(--ink); }
+
+      /* Marquee / Live badge */
+      .live-dot {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        background: var(--accent);
+        border-radius: 999px;
+        animation: pulse 1.6s ease-in-out infinite;
+      }
+      @keyframes pulse {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.5; transform: scale(1.4); }
+      }
+
+      /* Project card hover */
+      .project-card {
+        transition: transform 120ms ease, box-shadow 120ms ease;
+      }
+      .project-card:hover {
+        transform: translate(-3px, -3px);
+        box-shadow: 6px 6px 0 0 var(--ink);
+      }
+
+      /* Animated underline for inline links */
+      a.link-und {
+        background-image: linear-gradient(to right, var(--ink) 0, var(--ink) 100%);
+        background-position: 0 100%;
+        background-repeat: no-repeat;
+        background-size: 100% 2px;
+        text-decoration: none;
+      }
+      a.link-und:hover {
+        background-image: linear-gradient(to right, var(--accent) 0, var(--accent) 100%);
+      }
+
+      /* Number prefix */
+      .section-num::before {
+        content: attr(data-num) " ";
+        color: var(--accent);
+      }
+
+      /* Print: dense, single column, A4-friendly */
+      @media print {
+        body { background: white !important; }
+        .no-print { display: none !important; }
+        .display { font-weight: 800; }
+        section { page-break-inside: avoid; }
+        @page { size: A4; margin: 12mm 14mm; }
+      }
+    </style>
+  </head>
+
+  <body class="min-h-screen">
+    <div class="no-print border-b-2 border-black bg-black text-yellow-200 text-xs uppercase tracking-[0.3em] py-2 px-6 flex items-center justify-between">
+      <span class="flex items-center gap-2">
+        <span class="live-dot" style={`background:${accent}`}></span>
+        {variantLabel} <span class="opacity-60">edition</span>
+      </span>
+      <span class="hidden sm:inline opacity-80">{identity.location}</span>
+      <span class="flex items-center gap-3">
+        <a href="/" class="hover:underline">accueil</a>
+        <span class="opacity-40">/</span>
+        <a href={variant === "vue" ? "/react" : "/vue"} class="hover:underline">
+          {variant === "vue" ? "voir version React" : "voir version Vue"}
+        </a>
+      </span>
+    </div>
+
+    <main class="mx-auto max-w-6xl px-6 sm:px-10 py-10 sm:py-16">
+      <!-- Hero -->
+      <section class="border-b border-black pb-6">
+        <div class="flex items-baseline justify-between text-xs uppercase tracking-[0.3em] mb-8">
+          <span>CV / 2026 / v1</span>
+          <span>{identity.handle}</span>
+        </div>
+
+        <h1 class="display sm:text-8xl uppercase leading-tight">
+          {identity.firstName.toLowerCase()}<span class="accent">.</span><br />
+          ahouandjinou.
+        </h1>
+
+        <div class="mt-8 grid sm:grid-cols-[3fr_2fr] gap-8 items-start">
+          <p class="display text-3xl sm:text-4xl capitalize font-light!">
+            {headline.tagline}
+          </p>
+          <p class="text-sm uppercase tracking-widest leading-relaxed">
+            <span class="accent font-bold">{headline.title}</span><br />
+            <span class="opacity-70">{headline.sub}</span>
+          </p>
+        </div>
+      </section>
+
+      <!-- Stats strip -->
+      <!-- <section class="grid grid-cols-2 sm:grid-cols-4 border-b-2 border-black">
+        {stats.map((s, i) => (
+          <div class={`p-6 sm:p-8 ${i < stats.length - 1 ? "sm:border-r-2 border-black" : ""} ${i % 2 === 1 ? "bg-black text-yellow-200" : ""}`}>
+            <p class="display text-5xl sm:text-7xl tabular-nums">{s.value}</p>
+            <p class="mt-2 text-[10px] sm:text-xs uppercase tracking-widest opacity-80">{s.label}</p>
+          </div>
+        ))}
+      </section> -->
+
+      <section class="py-6 sm:py-12 border-b border-black grid sm:grid-cols-[0.5fr_1fr] gap-4">
+        <h2 class="display text-5xl uppercase font-semibold! tracking-widest section-num" data-num="[01]">
+          About<span class="accent">.</span>
+        </h2>
+        <div class="space-y-1 text-sm sm:text-base leading-relaxed">
+          {about.map((p) => <p>{p}</p>)}
+        </div>
+      </section>
+
+      <!-- <section class="py-6 border-b-2 border-black flex flex-wrap items-center gap-6 text-sm">
+        <span class="flex items-center gap-2 uppercase tracking-widest text-xs">
+          <span class="live-dot"></span>
+          Live coding stats
+        </span>
+        <span><b>{wakatime.dailyAverage}</b> <span class="opacity-60 text-xs uppercase tracking-widest">/ jour</span></span>
+        <span><b>{wakatime.totalLast7Days}</b> <span class="opacity-60 text-xs uppercase tracking-widest">/ 7 derniers jours</span></span>
+        <span class="opacity-70 text-xs">via <a href={identity.wakatimeUrl} class="link-und" target="_blank">{identity.wakatime}</a></span>
+      </section> -->
+
+      <!-- Experience -->
+      <section class="py-6 sm:py-12 border-b border-black">
+        <h2 class="display text-5xl uppercase mb-12 font-semibold! tracking-widest section-num" data-num="[02]">
+          Experience<span class="accent">.</span>
+        </h2>
+        <div class="space-y-12">
+          {experiences.map((j, i) => (
+            <article class="grid sm:grid-cols-[160px_1fr] gap-6 sm:gap-12 pb-10 border-b border-black/30 last:border-0 last:pb-0">
+              <div>
+                <p class="display text-4xl font-semibold! tracking-widest">0{i + 1}</p>
+                <p class="text-xs uppercase tracking-widest mt-3 font-bold">{j.period}</p>
+                <p class="text-xs uppercase tracking-widest mt-1 opacity-60">{j.location}</p>
+              </div>
+              <div>
+                <h3 class="display text-2xl sm:text-4xl uppercase leading-tight">
+                  {j.role}
+                </h3>
+                <p class="text-sm uppercase tracking-widest mt-2">
+                  <span class="accent">{">"}</span> {j.company}
+                </p>
+                <p class="mt-4 text-lg leading-relaxed max-w-3xl text-justify">
+                  {j.summary[variant]}
+                </p>
+                <ul class="mt-4 space-y-1.5">
+                  {j.highlights[variant].map((h) => (
+                    <li class="text-sm flex gap-3">
+                      <span class="accent font-bold shrink-0">■</span>
+                      <span>{h}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <!-- Projects -->
+      <section class="py-12 sm:py-16 border-b  border-black">
+        <h2 class="display text-5xl sm:text-6xl uppercase mb-12 section-num" data-num="[03]">
+          Selected work<span class="accent">.</span>
+        </h2>
+        <div class="grid sm:grid-cols-2 gap-4 sm:gap-5">
+          {projects.map((p) => (
+            <article class="project-card box-thick bg-white p-6 flex flex-col">
+              <h3 class="display text-3xl uppercase">{p.name}</h3>
+              <p class="text-sm font-bold mt-1 accent uppercase tracking-wide">{p.tagline}</p>
+              <p class="mt-4 text-sm leading-relaxed flex-1">{p.description}</p>
+              <div class="mt-4 flex flex-wrap gap-1.5">
+                {p.stack.map((s) => (
+                  <span class="box px-2 py-0.5 text-[11px] uppercase tracking-widest">{s}</span>
+                ))}
+              </div>
+              {(p.link || p.live) && (
+                <div class="mt-4 pt-3 border-t border-black/20 flex flex-wrap gap-x-4 gap-y-1 text-xs uppercase tracking-widest">
+                  {p.link && (
+                    <a href={`https://${p.link}`} class="link-und" target="_blank">{">"} code</a>
+                  )}
+                  {p.live && (
+                    <a href={`https://${p.live}`} class="link-und" target="_blank">{">"} live</a>
+                  )}
+                </div>
+              )}
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <!-- Skills -->
+      <section class="py-6 sm:py-12 border-b border-black">
+        <h2 class="display text-5xl sm:text-6xl uppercase mb-12 section-num" data-num="[04]">
+          Stack<span class="accent">.</span>
+        </h2>
+        <div class="space-y-4">
+          {skills.map((cat) => (
+            <div class="flex flex-wrap items-baseline gap-3 sm:gap-4 pb-3">
+              <p class="text-xs uppercase tracking-widest w-32 sm:w-40 shrink-0 font-bold accent">
+                {cat.label}
+              </p>
+              <div class="flex flex-wrap gap-2">
+                {cat.items.map((s) => (
+                  <span class="box px-2 py-1 text-sm">{s}</span>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <!-- Awards + Education -->
+      <section class="py-6 sm:py-12 border-b border-black grid sm:grid-cols-2 gap-12">
+        <div>
+          <h2 class="display text-4xl uppercase mb-8 font-semibold! tracking-widest section-num" data-num="[05]">
+            Awards<span class="accent">.</span>
+          </h2>
+          <ul class="space-y-4">
+            {awards.map((a) => (
+              <li>
+                <p class="text-xs uppercase tracking-widest accent font-bold">{a.year}</p>
+                <p class="text-base font-bold leading-snug mt-1">{a.title}</p>
+                {a.sub && <p class="text-sm opacity-70">{a.sub}</p>}
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div>
+          <h2 class="display text-4xl uppercase mb-8 font-semibold! tracking-widest section-num" data-num="[06]">
+            Education<span class="accent">.</span>
+          </h2>
+          <ul class="space-y-6">
+            {education.map((e) => (
+              <li>
+                <p class="text-xs uppercase tracking-widest accent font-bold">{e.period}</p>
+                <p class="text-lg font-bold leading-snug mt-1">{e.title}</p>
+                <p class="text-sm">{e.field}</p>
+                <p class="text-sm opacity-70 mt-0.5">{e.school}</p>
+                <p class="text-xs opacity-60 mt-1 leading-relaxed">{e.detail}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      <!-- Contact / Footer -->
+      <section class="py-6 sm:py-12 grid sm:grid-cols-2 gap-4">
+        <h2 class="display text-5xl uppercase font-semibold! tracking-widest">
+          Get in touch<span class="accent">.</span>
+        </h2>
+        <div class="space-y-4 text-base">
+          <div>
+            <p class="text-xs uppercase tracking-widest accent font-bold">email</p>
+            <p class="mt-1"><a href={`mailto:${identity.email}`} class="link-und">{identity.email}</a></p>
+          </div>
+          <div>
+            <p class="text-xs uppercase tracking-widest accent font-bold">téléphone</p>
+            <p class="mt-1">{identity.phone}</p>
+          </div>
+          <div>
+            <p class="text-xs uppercase tracking-widest accent font-bold">github</p>
+            <p class="mt-1"><a href={identity.githubUrl} class="link-und" target="_blank">{identity.github}</a></p>
+          </div>
+          <div>
+            <p class="text-xs uppercase tracking-widest accent font-bold">linkedin</p>
+            <p class="mt-1"><a href={identity.linkedinUrl} class="link-und" target="_blank">{identity.linkedin}</a></p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <PrintBar />
+  </body>
+</html>

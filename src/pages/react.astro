@@ -1,0 +1,8 @@
+---
+import BrutalistCV from "../layouts/BrutalistCV.astro";
+import { getCV } from "../content";
+
+const cv = getCV("react");
+---
+
+<BrutalistCV cv={cv} />

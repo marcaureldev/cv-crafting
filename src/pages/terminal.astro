@@ -1,0 +1,105 @@
+---
+import "../styles/global.css";
+import PrintBar from "../components/PrintBar.astro";
+import { cv } from "../content";
+import {
+  banner,
+  statsLines,
+  experienceBlock,
+  projectLines,
+  skillsBlock,
+  contactBlock,
+} from "../terminal-content";
+---
+
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>{cv.identity.name} — Terminal</title>
+  </head>
+  <body class="term-body">
+    <div class="no-print sticky top-0 z-10 border-b border-white/10 bg-black/90 backdrop-blur">
+      <div class="mx-auto max-w-4xl px-6 py-3 flex items-center gap-3">
+        <span class="flex gap-2">
+          <span class="h-3 w-3 rounded-full bg-red-500/80"></span>
+          <span class="h-3 w-3 rounded-full bg-yellow-500/80"></span>
+          <span class="h-3 w-3 rounded-full bg-green-500/80"></span>
+        </span>
+        <span class="text-xs text-neutral-400">
+          ~/{cv.identity.handle.replace("@", "")} — zsh — 80×40
+        </span>
+      </div>
+    </div>
+
+    <main class="mx-auto max-w-4xl px-6 py-10 leading-relaxed text-sm sm:text-[15px]">
+      <pre class="ok select-none text-xs sm:text-sm">{banner}</pre>
+      <p class="dim">— {cv.identity.title}</p>
+
+      <section class="mt-10">
+        <p class="prompt">whoami</p>
+        <p>
+          <span class="ok">{cv.identity.name}</span>
+          <span class="dim">
+            {" · "}{cv.identity.location}{" · "}{cv.identity.availability}
+          </span>
+        </p>
+        <p class="mt-1 dim">{cv.identity.tagline}</p>
+      </section>
+
+      <section class="mt-8">
+        <p class="prompt">cat about.txt</p>
+        {cv.about.map((p) => <p class="mt-1">{p}</p>)}
+      </section>
+
+      <section class="mt-8">
+        <p class="prompt">./stats --pretty</p>
+        <pre class="mt-1">{statsLines}</pre>
+      </section>
+
+      <section class="mt-8">
+        <p class="prompt">cat experience.json | jq</p>
+        <pre class="mt-1 str">{experienceBlock}</pre>
+      </section>
+
+      <section class="mt-8">
+        <p class="prompt">ls -la projects/</p>
+        <pre class="mt-1">{projectLines}</pre>
+      </section>
+
+      <section class="mt-8">
+        <p class="prompt">skills --all</p>
+        <pre class="mt-1 fn">{skillsBlock}</pre>
+      </section>
+
+      <section class="mt-8 grid sm:grid-cols-2 gap-6">
+        <div>
+          <p class="prompt">cat edu.md</p>
+          {cv.education.map((e) => (
+            <p class="mt-1">
+              <span class="ok">▸</span> {e.title}
+              <span class="dim"> — {e.school}, {e.year}</span>
+            </p>
+          ))}
+        </div>
+        <div>
+          <p class="prompt">cat writing.md</p>
+          {cv.writing.map((w) => (
+            <p class="mt-1">
+              <span class="ok">▸</span> {w.title}
+              <span class="dim"> — {w.where}, {w.date}</span>
+            </p>
+          ))}
+        </div>
+      </section>
+
+      <section class="mt-10 border-t border-white/10 pt-6">
+        <p class="prompt">contact --json</p>
+        <pre class="mt-1 str">{contactBlock}</pre>
+        <p class="prompt mt-4"><span class="animate-pulse">_</span></p>
+      </section>
+    </main>
+
+    <PrintBar theme="dark" />
+  </body>
+</html>

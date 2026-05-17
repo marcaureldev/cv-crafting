@@ -1,0 +1,16 @@
+---
+const { theme = "light" } = Astro.props;
+const bg = theme === "dark" ? "bg-neutral-900/90 text-white border-white/10" : "bg-white/90 text-neutral-900 border-neutral-200";
+---
+<div
+  class={`no-print fixed bottom-4 right-4 z-50 flex items-center gap-2 rounded-full border ${bg} backdrop-blur px-3 py-2 shadow-lg text-sm`}
+>
+  <a href="/" class="px-2 py-1 rounded hover:bg-black/5 dark:hover:bg-white/10">← Retour</a>
+  <button
+    type="button"
+    onclick="window.print()"
+    class="px-3 py-1 rounded bg-black text-white text-xs uppercase tracking-wider hover:bg-neutral-700"
+  >
+    Imprimer / PDF
+  </button>
+</div>

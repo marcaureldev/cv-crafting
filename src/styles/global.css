@@ -1,0 +1,58 @@
+/* @import statements MUST come first (CSS spec) */
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,700;9..144,900&family=Inter:wght@300;400;500;600;700&family=Inter+Tight:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&family=Geist+Mono:wght@400;500;700&display=swap");
+@import "tailwindcss";
+
+/* ===== CSS variables for fonts (used by each variant) ===== */
+:root {
+  --font-serif: "Fraunces", ui-serif, Georgia, serif;
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Inter Tight", "Inter", ui-sans-serif, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", monospace;
+  --font-mono-alt: "Geist Mono", "JetBrains Mono", ui-monospace, monospace;
+}
+
+/* ===== Terminal variant styles (used by /terminal) ===== */
+.term-body {
+  font-family: var(--font-mono);
+  background: #0a0a0a;
+  color: #d4d4d4;
+  min-height: 100vh;
+}
+.term-body .prompt::before {
+  content: "$ ";
+  color: #4ade80;
+}
+.term-body .kw { color: #f472b6; }
+.term-body .str { color: #fbbf24; }
+.term-body .fn { color: #60a5fa; }
+.term-body .ok { color: #4ade80; }
+.term-body .dim { color: #737373; }
+.term-body pre {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* ===== Print: hide nav, force light background, A4-friendly ===== */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background: white !important;
+    color: black !important;
+  }
+  .term-body { background: white !important; color: #111 !important; }
+  .term-body .ok { color: #047857 !important; }
+  .term-body .kw { color: #be185d !important; }
+  .term-body .str { color: #b45309 !important; }
+  .term-body .fn { color: #1d4ed8 !important; }
+  .term-body .dim { color: #6b7280 !important; }
+  .term-body .prompt::before { color: #047857 !important; }
+  @page {
+    size: A4;
+    margin: 14mm;
+  }
+}

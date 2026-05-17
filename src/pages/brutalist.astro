@@ -1,0 +1,207 @@
+---
+import "../styles/global.css";
+import PrintBar from "../components/PrintBar.astro";
+import { cv } from "../content";
+---
+
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>{cv.identity.name} — Brutalist</title>
+    <style>
+      :root {
+        --ink: #0a0a0a;
+        --paper: #fef9c3;
+        --accent: #f43f5e;
+      }
+      body {
+        font-family: var(--font-mono-alt);
+        background: var(--paper);
+        color: var(--ink);
+      }
+      .display {
+        font-family: var(--font-display);
+        font-weight: 900;
+        letter-spacing: -0.04em;
+        line-height: 0.85;
+      }
+      .barred {
+        position: relative;
+        display: inline-block;
+      }
+      .barred::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0.12em;
+        height: 0.18em;
+        background: var(--accent);
+        z-index: -1;
+      }
+      .grid-rule {
+        background-image:
+          linear-gradient(to right, rgba(0, 0, 0, 0.08) 1px, transparent 1px);
+        background-size: calc(100% / 12) 100%;
+      }
+      .box {
+        border: 2px solid var(--ink);
+      }
+      .accent {
+        color: var(--accent);
+      }
+      .bg-accent {
+        background: var(--accent);
+      }
+      @media print {
+        body {
+          background: white;
+        }
+      }
+    </style>
+  </head>
+  <body class="min-h-screen">
+    <!-- Top strip -->
+    <div class="border-b-2 border-black bg-black text-yellow-200 text-xs uppercase tracking-[0.3em] py-2 px-6 flex justify-between">
+      <span>{cv.identity.name} · CV · 2026</span>
+      <span class="hidden sm:inline">{cv.identity.location} — {cv.identity.availability}</span>
+      <span>v.1.0</span>
+    </div>
+
+    <main class="mx-auto max-w-6xl px-6 py-12">
+      <!-- Hero -->
+      <section class="grid-rule pb-8 border-b-2 border-black">
+        <p class="text-xs uppercase tracking-[0.3em]">— Hello, je suis</p>
+        <h1 class="display mt-4 text-[18vw] sm:text-[12rem] uppercase">
+          {cv.identity.name}<span class="accent">.</span>
+        </h1>
+        <p class="display mt-2 text-3xl sm:text-5xl uppercase">
+          I <span class="barred">build</span> & I <span class="barred">break</span>.
+        </p>
+        <p class="mt-6 text-sm uppercase tracking-widest max-w-2xl">
+          {cv.identity.title} — {cv.identity.tagline}
+        </p>
+      </section>
+
+      <!-- Stats strip -->
+      <section class="grid grid-cols-2 sm:grid-cols-4 border-b-2 border-black">
+        {cv.stats.map((s, i) => (
+          <div class={`p-6 ${i < cv.stats.length - 1 ? "border-r-2 border-black" : ""} ${i % 2 === 1 ? "bg-black text-yellow-200" : ""}`}>
+            <p class="display text-6xl">{s.value}</p>
+            <p class="mt-2 text-xs uppercase tracking-widest">{s.label}</p>
+          </div>
+        ))}
+      </section>
+
+      <!-- About -->
+      <section class="py-12 border-b-2 border-black grid sm:grid-cols-[1fr_2fr] gap-8">
+        <h2 class="display text-5xl uppercase">
+          [01]<br/>About<span class="accent">.</span>
+        </h2>
+        <div class="space-y-4 text-lg leading-snug">
+          {cv.about.map((p) => <p>{p}</p>)}
+        </div>
+      </section>
+
+      <!-- Experience -->
+      <section class="py-12 border-b-2 border-black">
+        <h2 class="display text-5xl uppercase mb-10">
+          [02] Experience<span class="accent">.</span>
+        </h2>
+        <div class="space-y-10">
+          {cv.experience.map((j, i) => (
+            <article class="grid sm:grid-cols-[140px_1fr] gap-6 sm:gap-12 pb-8 border-b border-black/30 last:border-0">
+              <div>
+                <p class="display text-3xl">0{i + 1}</p>
+                <p class="text-xs uppercase tracking-widest mt-2">{j.period}</p>
+              </div>
+              <div>
+                <h3 class="display text-3xl uppercase">{j.role}</h3>
+                <p class="text-sm uppercase tracking-widest mt-1">
+                  → {j.company} · {j.location}
+                </p>
+                <p class="mt-3 text-lg leading-snug">{j.summary}</p>
+                <ul class="mt-3 space-y-1">
+                  {j.highlights.map((h) => (
+                    <li class="text-sm">
+                      <span class="accent font-bold">■</span> {h}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <!-- Projects -->
+      <section class="py-12 border-b-2 border-black">
+        <h2 class="display text-5xl uppercase mb-10">
+          [03] Work<span class="accent">.</span>
+        </h2>
+        <div class="grid sm:grid-cols-3 gap-4">
+          {cv.projects.map((p) => (
+            <div class="box bg-white p-5">
+              <h3 class="display text-2xl uppercase">{p.name}</h3>
+              <p class="mt-2 text-sm">{p.tagline}</p>
+              <p class="mt-4 text-xs uppercase tracking-widest accent">
+                {p.stack.join(" / ")}
+              </p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <!-- Skills -->
+      <section class="py-12 border-b-2 border-black">
+        <h2 class="display text-5xl uppercase mb-10">
+          [04] Stack<span class="accent">.</span>
+        </h2>
+        <div class="space-y-3">
+          {[
+            ["Languages", cv.skills.languages],
+            ["Infrastructure", cv.skills.infra],
+            ["Security", cv.skills.security],
+          ].map(([label, items]) => (
+            <div class="flex flex-wrap items-baseline gap-3 border-b border-black/30 pb-3">
+              <p class="text-xs uppercase tracking-widest w-32 shrink-0">{label}</p>
+              <div class="flex flex-wrap gap-2">
+                {(items as string[]).map((s) => (
+                  <span class="box px-2 py-0.5 text-sm">{s}</span>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <!-- Footer / Contact -->
+      <section class="py-12 grid sm:grid-cols-2 gap-8">
+        <h2 class="display text-5xl uppercase">
+          Get in<br/>touch<span class="accent">.</span>
+        </h2>
+        <div class="space-y-2 text-lg">
+          <p>
+            <span class="text-xs uppercase tracking-widest accent">Email →</span>
+            <br/>{cv.identity.email}
+          </p>
+          <p>
+            <span class="text-xs uppercase tracking-widest accent">Web →</span>
+            <br/>{cv.identity.website}
+          </p>
+          <p>
+            <span class="text-xs uppercase tracking-widest accent">Github →</span>
+            <br/>{cv.identity.github}
+          </p>
+        </div>
+      </section>
+
+      <p class="text-xs uppercase tracking-[0.3em] text-center border-t-2 border-black pt-6">
+        — end of document —
+      </p>
+    </main>
+
+    <PrintBar />
+  </body>
+</html>

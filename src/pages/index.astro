@@ -1,0 +1,178 @@
+---
+import "../styles/global.css";
+import { getCV } from "../content";
+
+const vue = getCV("vue");
+const react = getCV("react");
+
+const main = [
+  {
+    slug: "vue",
+    label: "Version Vue & Nuxt",
+    headline: vue.headline.tagline,
+    sub: vue.headline.sub,
+    accent: "#10b981",
+  },
+  {
+    slug: "react",
+    label: "Version React & Next.js",
+    headline: react.headline.tagline,
+    sub: react.headline.sub,
+    accent: "#3b82f6",
+  },
+];
+
+const prototypes = [
+  { slug: "editorial", name: "Editorial", note: "Magazine littéraire, serif & blanc" },
+  { slug: "terminal", name: "Terminal", note: "IDE / hacker, monospace & green" },
+  { slug: "brutalist", name: "Brutalist (legacy)", note: "Première version du design retenu" },
+  { slug: "swiss", name: "Swiss", note: "Grille stricte, intemporel & clair" },
+];
+---
+
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Marc-Aurel AHOUANDJINOU - CV</title>
+    <style>
+      body {
+        font-family: var(--font-sans);
+        background: #fef9c3;
+        color: #0a0a0a;
+      }
+      .display {
+        font-family: var(--font-display);
+        font-weight: 900;
+        letter-spacing: -0.04em;
+        line-height: 0.85;
+      }
+      .card-main {
+        transition: transform 120ms ease, box-shadow 120ms ease;
+      }
+      .card-main:hover {
+        transform: translate(-4px, -4px);
+        box-shadow: 8px 8px 0 0 #0a0a0a;
+      }
+    </style>
+  </head>
+  <body class="min-h-screen">
+    <!-- Top strip -->
+    <div class="border-b-2 border-black bg-black text-yellow-200 text-xs uppercase tracking-[0.3em] py-2 px-6 flex items-center justify-between">
+      <span>Marc-Aurel AHOUANDJINOU / CV / 2026</span>
+      <span class="hidden sm:inline opacity-80">Bohicon, Bénin</span>
+      <span class="opacity-80">v1.0</span>
+    </div>
+
+    <main class="mx-auto max-w-6xl px-6 sm:px-10 py-12 sm:py-20">
+      <!-- Hero -->
+      <header class="mb-16">
+        <p class="text-xs uppercase tracking-[0.3em] opacity-70">Frontend Developer</p>
+        <h1 class="display mt-3 text-6xl sm:text-9xl uppercase">
+          Marc-Aurel<br />
+          Ahouandjinou<span style="color:#e11d48">.</span>
+        </h1>
+        <p class="mt-6 max-w-2xl text-lg sm:text-xl leading-snug">
+          Deux versions du CV, deux spécialisations. Choisis celle qui correspond
+          à ton offre.
+        </p>
+      </header>
+
+      <!-- Two main CV versions -->
+      <section class="grid sm:grid-cols-2 gap-5 mb-20">
+        {
+          main.map((v, i) => (
+            <a
+              href={`/${v.slug}`}
+              class="card-main relative block aspect-square sm:aspect-4/5 bg-white p-8 sm:p-10 border-[3px] border-black overflow-hidden"
+            >
+              <div class="flex h-full flex-col justify-between">
+                <div>
+                  <span class="text-xs uppercase tracking-[0.3em] opacity-60">
+                    0{i + 1} / 02
+                  </span>
+                  <h2
+                    class="display mt-4 text-5xl sm:text-7xl uppercase"
+                    style={`color:${v.accent}`}
+                  >
+                    {v.slug === "vue" ? "Vue." : "React."}
+                  </h2>
+                  <p class="display mt-2 text-2xl sm:text-3xl uppercase">
+                    {v.slug === "vue" ? "Nuxt." : "Next.js."}
+                  </p>
+                </div>
+                <div>
+                  <p class="text-base sm:text-lg font-bold leading-snug">
+                    {v.headline}
+                  </p>
+                  <p class="mt-2 text-xs sm:text-sm opacity-60 leading-snug">
+                    {v.sub}
+                  </p>
+                  <p class="mt-5 text-xs uppercase tracking-[0.3em] flex items-center gap-2">
+                    Ouvrir le CV
+                    <span style={`color:${v.accent}`}>→</span>
+                  </p>
+                </div>
+              </div>
+            </a>
+          ))
+        }
+      </section>
+
+      <!-- Quick contact -->
+      <section class="border-t-2 border-black py-8 grid sm:grid-cols-4 gap-6 text-sm">
+        <div>
+          <p class="text-xs uppercase tracking-[0.3em] opacity-60">Email</p>
+          <p class="mt-1 font-medium">ahouandjinoumarcaurel10@gmail.com</p>
+        </div>
+        <div>
+          <p class="text-xs uppercase tracking-[0.3em] opacity-60">GitHub</p>
+          <a class="mt-1 font-medium block underline" href="https://github.com/marcaureldev">github.com/marcaureldev</a>
+        </div>
+        <div>
+          <p class="text-xs uppercase tracking-[0.3em] opacity-60">LinkedIn</p>
+          <a class="mt-1 font-medium block underline" href="https://www.linkedin.com/in/marc-aurel-ahouandjinou">marc-aurel-ahouandjinou</a>
+        </div>
+        <div>
+          <p class="text-xs uppercase tracking-[0.3em] opacity-60">Wakatime</p>
+          <a class="mt-1 font-medium block underline" href="https://wakatime.com/@marcaurel">wakatime.com/@marcaurel</a>
+        </div>
+      </section>
+
+      <!-- Prototypes archive -->
+      <section class="mt-16 border-t-2 border-black pt-10">
+        <p class="text-xs uppercase tracking-[0.3em] opacity-60 mb-2">Archive</p>
+        <h2 class="display text-3xl sm:text-4xl uppercase mb-2">
+          4 prototypes de design.
+        </h2>
+        <p class="text-sm opacity-70 mb-8 max-w-2xl">
+          Les 4 directions artistiques explorées avant de choisir le brutalist.
+          Conservés ici comme référence.
+        </p>
+        <ul class="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          {
+            prototypes.map((p) => (
+              <li>
+                <a
+                  href={`/${p.slug}`}
+                  class="block border-2 border-black p-4 bg-white hover:bg-yellow-200 transition"
+                >
+                  <p class="text-xs uppercase tracking-[0.3em] opacity-60">
+                    proto
+                  </p>
+                  <p class="display text-2xl uppercase mt-1">{p.name}</p>
+                  <p class="text-xs opacity-60 mt-2">{p.note}</p>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </section>
+
+      <footer class="mt-20 text-xs uppercase tracking-[0.3em] opacity-50 text-center border-t-2 border-black pt-8">
+        Built with Astro + Tailwind. Source : github.com/marcaureldev
+      </footer>
+    </main>
+  </body>
+</html>
