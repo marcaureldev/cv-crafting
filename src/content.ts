@@ -8,10 +8,10 @@ export type Variant = "vue" | "react";
 
 // ─── Identité (partagée) ──────────────────────────────────────────────
 const identity = {
-  fullName: "Marc-Aurel AHOUANDJINOU",
-  firstName: "Marc-Aurel",
+  fullName: "Marc-Aurel M. L'H. Dona AHOUANDJINOU",
+  firstName: "Marc-Aurel M. L'H. Dona",
   handle: "marcaureldev",
-  location: "Bohicon, Bénin",
+  location: "Abomey-Calavi, Bénin",
   availability: "Ouvert aux opportunités : CDI, Freelance remote, CDD",
   email: "ahouandjinoumarcaurel10@gmail.com",
   phone: "+229 01 59 65 98 29",
@@ -56,9 +56,10 @@ const stats: Record<Variant, { value: string; label: string }[]> = {
 // ─── About (paragraphe d'intro) ───────────────────────────────────────
 const about: Record<Variant, string[]> = {
   vue: [
-    "Je suis Marc-Aurel, développeur frontend spécialisé sur l'écosystème Vue/Nuxt.",
-    "Je transforme des maquettes Figma en interfaces modernes, accessibles et performantes, avec une rigueur que je m'efforce d'appliquer du composant le plus simple à l'architecture complète.",
-    "27h de code par semaine en moyenne, Cursor comme éditeur principal. J'apprends vite, je livre, je documente.",
+  "Je suis Marc-Aurel AHOUANDJINOU, Développeur Front-End spécialisé dans l’écosystème Vue.js et Nuxt.js",
+    "Je transforme des maquettes Figma en interfaces modernes, conçues pour être performantes, intuitives et optimisées pour le SEO, avec une rigueur que je m'efforce d'appliquer du composant le plus simple à l'architecture complète.",
+    "J'applique les bonnes pratiques du développement Front-End, notamment l’optimisation des performances, la structuration du code et l’intégration d’API, tout en maintenant une veille technologique active sur l’écosystème Vue",
+    "J'apprends vite, je livre, je documente.",
   ],
   react: [
     "Je suis Marc-Aurel, développeur frontend spécialisé sur l'écosystème React/Next.js.",
@@ -83,7 +84,7 @@ const experiences: Experience[] = [
     period: "Oct 2025 - Présent",
     role: "Frontend Developer",
     company: "Godjeli",
-    location: "Remote, temps partiel",
+    location: "Remote, Temps partiel",
     summary: {
       vue: "Plateforme e-commerce transfrontalière (achat international, livraison Afrique). Développement frontend client et back-office admin.",
       react:
@@ -105,9 +106,9 @@ const experiences: Experience[] = [
   },
   {
     period: "Sept 2025 - Juil 2026",
-    role: "Frontend Developer (Stage)",
+    role: "Internship Frontend Developer",
     company: "Cyberspector",
-    location: "Remote",
+    location: "Cotonou, Bénin",
     summary: {
       vue: "Spectorly : plateforme de résilience humaine en cybersécurité. Maintenance v1 et développement v2 en Vue/Nuxt.",
       react:
@@ -131,9 +132,9 @@ const experiences: Experience[] = [
   },
   {
     period: "Avr 2025 - Juin 2025",
-    role: "Frontend Developer (Stage)",
+    role: "Internship Frontend Developer",
     company: "Friym",
-    location: "Remote",
+    location: "Porto-Novo, Bénin",
     summary: {
       vue: "Contribution au développement frontend de l'application, intégration d'interfaces utilisateur.",
       react: "Contribution au développement frontend de l'application, intégration d'interfaces utilisateur.",
@@ -190,12 +191,12 @@ type Project = {
 const projects: Record<Variant, Project[]> = {
   vue: [
     {
-      name: "BookMarker",
-      tagline: "Gestionnaire de favoris, test technique Vue 3",
+      name: "BookMarkly",
+      tagline: "Gestionnaire de favoris Vue/Nuxt",
       description:
-        "Application complète de gestion de bookmarks avec auth JWT, dashboard stats (Chart.js), tags, recherche. Background Galaxy WebGL avec OGL.",
-      stack: ["Vue 3", "TypeScript", "Tailwind", "Chart.js", "OGL/WebGL", "Vue Router", "JWT"],
-      link: "github.com/marcaureldev/bookmark-project",
+        "Application complète de gestion de bookmarks avec authentification, dashboard stats (Nuxt Charts), tags, recherche, gestion des collections.",
+      stack: ["Vue 3", "Nuxt 4", "TypeScript", "Tailwind", "Nuxt Charts", "JWT", "Supabase"],
+      live: "bookmarkdev.vercel.app"
     },
     {
       name: "Restaurant Food",
@@ -207,12 +208,13 @@ const projects: Record<Variant, Project[]> = {
       live: "food-restaurant-aurel.vercel.app",
     },
     {
-      name: "Gestion de Recettes",
-      tagline: "App full CRUD recettes, Nuxt et Firebase",
+      name: "T-Shirt Landing Page",
+      tagline: "Landing page e-commerce orientée conversion",
       description:
-        "Application web complète pour gérer recettes et ingrédients. Architecture modulaire, CRUD complet, intégration Firebase.",
-      stack: ["Nuxt 3", "Vue 3", "Firebase", "Tailwind"],
-      link: "github.com/marcaureldev/gestion-de-recettes",
+        "Conception d’une landing page moderne pour une marque de t-shirts avec focus sur l’expérience utilisateur et la conversion. Mise en place d’un design responsive, sections produit, call-to-action optimisés et animations légères pour améliorer l’engagement.",
+      stack: ["HTML", "Tailwind CSS", "JavaScript"],
+      live: "tshirst-landing-page.vercel.app",
+      link: "github.com/marcaureldev/Tshirst_landing_page",
     },
     {
       name: "TokenaWebApp",
@@ -220,6 +222,7 @@ const projects: Record<Variant, Project[]> = {
       description:
         "Conversion pixel-perfect d'une maquette Figma en app Nuxt. Intégration API Coingecko pour les cours crypto temps réel.",
       stack: ["Nuxt 3", "Vue 3", "Tailwind", "Coingecko API"],
+      live: "figma-to-code-ed2-week3-aurel.vercel.app"
     },
   ],
   react: [
