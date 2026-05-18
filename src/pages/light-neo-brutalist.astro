@@ -1,0 +1,423 @@
+---
+import "../styles/global.css";
+import { getCV } from "../content";
+
+const cv = getCV("vue");
+const { identity, headline, stats, about, experiences, projects, skills, awards, education } = cv;
+const pageTitle = `${identity.fullName} - ${headline.title}`;
+const lastName = identity.fullName.replace(identity.firstName, "").trim();
+---
+
+<html lang="fr" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={headline.tagline} />
+
+    <!-- Iconify (lucide icon set) -->
+    <script
+      is:inline
+      src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"
+    ></script>
+
+    <style>
+      @import url("https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@100,200,300,400,500,700,800,900&f[]=satoshi@300,400,500,700,900&display=swap");
+      @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
+      :root {
+        --ink: #061321;
+        --ink-soft: rgba(6, 19, 33, 0.6);
+        --ink-border: rgba(6, 19, 33, 0.15);
+        --paper: #fafaf8;
+        --caramel: #aa7f56;
+        --caramel-deep: #8e6843;
+        --font-display: "Cabinet Grotesk", ui-sans-serif, system-ui, sans-serif;
+        --font-body: "Satoshi", ui-sans-serif, system-ui, sans-serif;
+        --font-playfair: "Playfair Display", serif;
+      }
+
+      body {
+        font-family: var(--font-body);
+        background: var(--paper);
+        color: var(--ink);
+      }
+      body::selection,
+      ::selection {
+        background: var(--caramel);
+        color: #fff;
+      }
+
+      .font-body {
+        font-family: var(--font-body);
+      }
+      .font-playfair {
+        font-family: var(--font-playfair);
+      }
+      .text-ink { color: var(--ink); }
+      .text-ink-soft { color: var(--ink-soft); }
+      .text-caramel { color: var(--caramel); }
+      .text-caramel-deep { color: var(--caramel-deep); }
+      .bg-paper { background: var(--paper); }
+      .bg-ink { background: var(--ink); }
+      .bg-caramel { background: var(--caramel); }
+      .bg-caramel-deep { background: var(--caramel-deep); }
+      .border-ink { border-color: var(--ink); }
+      .border-ink-border { border-color: var(--ink-border); }
+      .border-caramel-deep { border-color: var(--caramel-deep); }
+      .divide-ink-border > * + * { border-color: var(--ink-border); }
+
+      .bg-dot-pattern {
+        background-image: radial-gradient(rgba(6, 19, 33, 0.1) 10%, transparent 11%);
+        background-size: 32px 32px;
+      }
+
+      /* Custom scrollbar */
+      ::-webkit-scrollbar { width: 12px; background: var(--paper); border-left: 1px solid var(--ink-border); }
+      ::-webkit-scrollbar-thumb { background: var(--ink-border); }
+      ::-webkit-scrollbar-thumb:hover { background: var(--caramel); }
+
+      /* Stat hover */
+      .stat-cell { transition: background-color 300ms ease, color 300ms ease; }
+      .stat-cell:hover { background: var(--caramel); }
+      .stat-cell:hover .stat-value { color: var(--ink); }
+      .stat-cell:hover .stat-label { color: rgba(6, 19, 33, 0.8); }
+
+      /* Experience row */
+      .exp-row { transition: background-color 200ms ease; }
+      .exp-row:hover { background: #fff; }
+      .exp-row:hover .exp-role { color: var(--caramel); }
+      .exp-role { transition: color 200ms ease; }
+
+      /* Project card */
+      .proj-card { transition: background-color 200ms ease; }
+      .proj-card:hover { background: #fff; }
+      .proj-card:hover .proj-title { color: var(--caramel); }
+      .proj-title { transition: color 200ms ease; }
+      .icon-btn { transition: background-color 200ms ease, color 200ms ease, border-color 200ms ease; }
+      .icon-btn:hover { background: var(--caramel); color: var(--ink); border-color: var(--caramel-deep); }
+      .icon-btn-dark { background: var(--ink); color: var(--paper); border-color: var(--caramel-deep); }
+      .icon-btn-dark:hover { background: var(--caramel); color: var(--ink); }
+
+      /* Skill bullet */
+      .skill-item { transition: color 200ms ease; }
+      .skill-item:hover { color: var(--caramel); }
+
+      /* Footer contact tile */
+      .contact-tile { transition: background-color 200ms ease, color 200ms ease; }
+      .contact-tile:hover { background: var(--ink); color: var(--paper); }
+      .contact-tile:hover .contact-icon,
+      .contact-tile:hover .contact-label,
+      .contact-tile:hover .contact-id { color: var(--paper); }
+      .contact-tile.linkedin:hover { background: #0077b5; }
+
+    </style>
+  </head>
+
+  <body>
+    <div class="min-h-screen bg-paper text-ink">
+      <main class="max-w-[1440px] mx-auto border-x border-ink-border flex flex-col">
+        <header
+          class="flex flex-col md:flex-row justify-between items-start md:items-center p-4 md:p-6 border-b border-ink-border font-mono text-sm tracking-widest gap-4"
+        >
+          <div class="flex flex-col gap-2 items-start">
+            <span class="text-caramel">@{identity.handle}</span>
+          </div>
+          <div class="flex flex-col md:text-right gap-1 text-ink-soft">
+            <div class="flex items-center md:justify-end gap-2">
+              <iconify-icon icon="lucide:map-pin"></iconify-icon>
+              <span>{identity.location}</span>
+            </div>
+            <div class="flex items-center md:justify-end gap-2 text-caramel">
+              <iconify-icon icon="lucide:zap"></iconify-icon>
+              <span>{identity.availability}</span>
+            </div>
+          </div>
+        </header>
+
+        <section
+          class="grid grid-cols-1 lg:grid-cols-12 divide-y lg:divide-y-0 lg:divide-x divide-ink-border border-b border-ink-border relative overflow-hidden"
+        >
+          <div class="lg:col-span-7 p-6 md:p-12 lg:p-16 flex flex-col justify-center relative z-10">
+            <div
+              class="font-bold text-caramel text-2xl border border-caramel-deep bg-white px-3 py-1.5 inline-block uppercase tracking-widest"
+            >
+            {identity.firstName} {lastName}
+            </div>
+            <h2
+              class="text-6xl leading-24 tracking-tight font-bold! uppercase text-ink mt-12 font-playfair"
+            >
+              Vue &amp; Nuxt <br />
+              <span class="text-caramel font-light font-playfair lowercase">frontend</span>
+              <br />
+              Developer
+            </h2>
+
+            <div class="mt-6 max-w-2xl">
+              <p class="text-xl md:text-2xl text-ink leading-snug mb-4">
+                I craft fast, modern, <span class="text-caramel">pixel-perfect</span> interfaces.
+              </p>
+              <p class="font-mono text-sm text-ink-soft uppercase tracking-widest">
+                Vue 3 &middot; Nuxt &middot; Pinia &middot; Tailwind &middot; TypeScript <br />
+                Figma to code, performance first.
+              </p>
+            </div>
+          </div>
+
+          <div class="lg:col-span-5 p-6 md:p-12 flex flex-col justify-center bg-white relative z-10">
+            <div class="border-l-4 border-caramel-deep pl-6 flex flex-col gap-4">
+              {about.map((p) => (
+                <p class="text-lg leading-relaxed text-ink/90">{p}</p>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <!-- STATS XXL -->
+        <!-- <section
+          class="grid grid-cols-2 lg:grid-cols-4 divide-x divide-y lg:divide-y-0 divide-ink-border border-b border-ink-border bg-white"
+        >
+          {stats.map((s) => (
+            <div class="stat-cell p-6 md:p-8 flex flex-col justify-center items-center text-center group">
+              <span class="stat-value font-mono text-5xl md:text-7xl font-bold text-caramel mb-2">{s.value}</span>
+              <span class="stat-label font-mono text-xs md:text-sm uppercase tracking-widest text-ink-soft">{s.label}</span>
+            </div>
+          ))}
+        </section> -->
+
+        <!-- EXPERIENCE -->
+        <section class="border-b border-ink-border">
+          <div class="p-4 md:p-6 border-b border-ink-border bg-white">
+            <h3 class="font-mono text-xl md:text-2xl uppercase tracking-widest text-caramel flex items-center gap-3">
+              <iconify-icon icon="lucide:briefcase"></iconify-icon>
+              Experience
+            </h3>
+          </div>
+          <div class="flex flex-col divide-y divide-ink-border">
+            {experiences.map((j) => (
+              <div class="exp-row grid grid-cols-1 md:grid-cols-12 group">
+                <div class="md:col-span-3 p-6 md:p-8 border-b md:border-b-0 md:border-r border-ink-border">
+                  <span class="font-mono text-sm text-caramel uppercase tracking-wider block mb-2">{j.period}</span>
+                  <span class="font-mono text-xs text-ink-soft uppercase block">{j.location}</span>
+                </div>
+                <div class="md:col-span-9 p-6 md:p-8">
+                  <div class="flex flex-col md:flex-row md:items-baseline justify-between mb-4 gap-2">
+                    <h4 class="exp-role font-serif-d text-3xl md:text-4xl text-ink">{j.role}</h4>
+                    <span class="font-mono text-lg text-ink">@ {j.company}</span>
+                  </div>
+                  <p class="text-ink-soft text-lg mb-6 max-w-3xl leading-relaxed">
+                    {j.summary.vue}
+                  </p>
+                  <ul class="font-mono text-sm text-ink/80 space-y-2 max-w-2xl">
+                    {j.highlights.vue.map((h) => (
+                      <li class="flex items-start gap-3">
+                        <iconify-icon icon="lucide:arrow-right" class="text-caramel mt-0.5 shrink-0"></iconify-icon>
+                        <span>{h}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <!-- PROJECTS + SKILLS -->
+        <section
+          class="grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-ink-border border-b border-ink-border"
+        >
+          <!-- PROJECTS -->
+          <div class="flex flex-col">
+            <div class="p-4 md:p-6 border-b border-ink-border bg-white">
+              <h3 class="font-mono text-xl md:text-2xl uppercase tracking-widest text-caramel flex items-center gap-3">
+                <iconify-icon icon="lucide:folder-code"></iconify-icon>
+                Selected Works
+              </h3>
+            </div>
+            <div class="flex flex-col divide-y divide-ink-border">
+              {projects.map((p) => (
+                <article class="proj-card p-6 md:p-8 group">
+                  <div class="flex justify-between items-start mb-3 gap-4">
+                    <h4 class="proj-title font-serif-d text-3xl text-ink">{p.name}</h4>
+                    <div class="flex gap-2 shrink-0">
+                      {p.link && (
+                        <a
+                          href={`https://${p.link}`}
+                          target="_blank"
+                          rel="noopener"
+                          class="icon-btn border border-ink-border p-2 bg-white"
+                          aria-label={`Code source de ${p.name}`}
+                        >
+                          <iconify-icon icon="lucide:github" class="text-xl"></iconify-icon>
+                        </a>
+                      )}
+                      {p.live && (
+                        <a
+                          href={`https://${p.live}`}
+                          target="_blank"
+                          rel="noopener"
+                          class="icon-btn icon-btn-dark p-2"
+                          aria-label={`Voir ${p.name} en ligne`}
+                        >
+                          <iconify-icon icon="lucide:play" class="text-xl"></iconify-icon>
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                  <p class="font-mono text-sm text-caramel mb-4">{p.tagline}</p>
+                  <p class="text-ink-soft mb-6">{p.description}</p>
+                  <div class="flex flex-wrap gap-2 font-mono text-xs uppercase tracking-wider">
+                    {p.stack.map((s) => (
+                      <span class="border border-ink-border bg-white text-ink-soft px-2 py-1">{s}</span>
+                    ))}
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+
+          <!-- SKILLS MATRIX -->
+          <div class="flex flex-col">
+            <div class="p-4 md:p-6 border-b border-ink-border bg-white">
+              <h3 class="font-mono text-xl md:text-2xl uppercase tracking-widest text-caramel flex items-center gap-3">
+                <iconify-icon icon="lucide:cpu"></iconify-icon>
+                Skills Matrix
+              </h3>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-ink-border h-full">
+              <div class="flex flex-col divide-y divide-ink-border md:border-r md:border-ink-border">
+                {skills.slice(0, 2).map((cat, idx) => (
+                  <div class="p-6 md:p-8 flex-1">
+                    <h5 class="font-serif-d text-2xl text-ink mb-6">{cat.label}</h5>
+                    <ul class="font-mono text-sm text-ink-soft space-y-3">
+                      {cat.items.map((s) => (
+                        <li class="skill-item flex items-center gap-2">
+                          <span class={`w-1.5 h-1.5 ${idx === 0 ? "bg-caramel" : "bg-[rgba(6,19,33,0.15)]"}`}></span>
+                          {s}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+              <div class="flex flex-col divide-y divide-ink-border">
+                {skills.slice(2, 4).map((cat) => (
+                  <div class="p-6 md:p-8 flex-1">
+                    <h5 class="font-serif-d text-2xl text-ink mb-6">{cat.label}</h5>
+                    <ul class="font-mono text-sm text-ink-soft space-y-3">
+                      {cat.items.map((s) => (
+                        <li class="skill-item flex items-center gap-2">
+                          <span class="w-1.5 h-1.5 bg-[rgba(6,19,33,0.15)]"></span>
+                          {s}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- EDUCATION + AWARDS -->
+        <section
+          class="grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-ink-border border-b border-ink-border"
+        >
+          <!-- EDUCATION -->
+          <div class="flex flex-col">
+            <div class="p-4 md:p-6 border-b border-ink-border bg-white">
+              <h3 class="font-mono text-xl uppercase tracking-widest text-ink flex items-center gap-3">
+                <iconify-icon icon="lucide:graduation-cap"></iconify-icon>
+                Éducation
+              </h3>
+            </div>
+            <div class="flex flex-col divide-y divide-ink-border">
+              {education.map((e) => (
+                <div class="p-6 md:p-8 hover:bg-white transition-colors">
+                  <div class="font-mono text-sm text-caramel mb-2">{e.period}</div>
+                  <h4 class="font-serif-d text-2xl text-ink mb-1">{e.title}</h4>
+                  <p class="font-mono text-sm text-ink/80 mb-4">{e.field} &mdash; {e.school}</p>
+                  <p class="text-ink-soft text-sm leading-relaxed">{e.detail}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <!-- AWARDS -->
+          <div class="flex flex-col">
+            <div class="p-4 md:p-6 border-b border-ink-border bg-white">
+              <h3 class="font-mono text-xl uppercase tracking-widest text-ink flex items-center gap-3">
+                <iconify-icon icon="lucide:award"></iconify-icon>
+                Récompenses
+              </h3>
+            </div>
+            <div class="p-6 md:p-8 hover:bg-white transition-colors h-full">
+              <ul class="space-y-6">
+                {awards.map((a) => (
+                  <li class="flex gap-4 items-start">
+                    <span class="font-mono text-caramel shrink-0">{a.year}</span>
+                    <div>
+                      <h4 class="font-serif-d text-xl text-ink leading-snug">{a.title}</h4>
+                      {a.sub && <p class="font-mono text-xs text-ink-soft mt-1">{a.sub}</p>}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- FOOTER CONTACT MATRIX -->
+        <footer
+          class="grid grid-cols-2 md:grid-cols-5 divide-y md:divide-y-0 divide-x divide-ink-border bg-white md:bg-transparent"
+        >
+          <a
+            href={`mailto:${identity.email}`}
+            class="contact-tile p-6 flex flex-col items-center justify-center gap-2 cursor-pointer text-center"
+          >
+            <iconify-icon icon="lucide:mail" class="contact-icon text-3xl text-caramel"></iconify-icon>
+            <span class="contact-label font-mono text-xs uppercase tracking-widest text-ink">Email</span>
+            <span class="contact-id font-mono text-[11px] text-ink-soft break-all">{identity.email}</span>
+          </a>
+          <a
+            href={identity.githubUrl}
+            target="_blank"
+            rel="noopener"
+            class="contact-tile p-6 flex flex-col items-center justify-center gap-2 cursor-pointer text-center"
+          >
+            <iconify-icon icon="lucide:github" class="contact-icon text-3xl text-caramel"></iconify-icon>
+            <span class="contact-label font-mono text-xs uppercase tracking-widest text-ink">GitHub</span>
+            <span class="contact-id font-mono text-[11px] text-ink-soft break-all">@{identity.handle}</span>
+          </a>
+          <a
+            href={identity.linkedinUrl}
+            target="_blank"
+            rel="noopener"
+            class="contact-tile linkedin p-6 flex flex-col items-center justify-center gap-2 cursor-pointer text-center"
+          >
+            <iconify-icon icon="lucide:linkedin" class="contact-icon text-3xl text-caramel"></iconify-icon>
+            <span class="contact-label font-mono text-xs uppercase tracking-widest text-ink">LinkedIn</span>
+            <span class="contact-id font-mono text-[11px] text-ink-soft break-all">Marc-Aurel Ahouandjinou</span>
+          </a>
+          <a
+            href={identity.wakatimeUrl}
+            target="_blank"
+            rel="noopener"
+            class="contact-tile p-6 flex flex-col items-center justify-center gap-2 cursor-pointer text-center"
+          >
+            <iconify-icon icon="lucide:clock" class="contact-icon text-3xl text-caramel"></iconify-icon>
+            <span class="contact-label font-mono text-xs uppercase tracking-widest text-ink">WakaTime</span>
+            <span class="contact-id font-mono text-[11px] text-ink-soft break-all">@marcaurel</span>
+          </a>
+          <a
+            href={`tel:${identity.phone.replace(/\s/g, "")}`}
+            class="contact-tile p-6 flex flex-col items-center justify-center gap-2 cursor-pointer text-center"
+          >
+            <iconify-icon icon="lucide:phone" class="contact-icon text-3xl text-caramel"></iconify-icon>
+            <span class="contact-label font-mono text-xs uppercase tracking-widest text-ink">Phone</span>
+            <span class="contact-id font-mono text-[11px] text-ink-soft">{identity.phone}</span>
+          </a>
+        </footer>
+      </main>
+    </div>
+  </body>
+</html>
