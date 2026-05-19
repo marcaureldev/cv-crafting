@@ -8,7 +8,7 @@ interface Props {
 }
 
 const { cv } = Astro.props;
-const { variant, identity, headline, stats, about, experiences, projects, skills, awards, education, wakatime } = cv;
+const { variant, identity, headline, about, experiences, projects, skills, education } = cv;
 
 // Accent color par variante
 const accent = variant === "vue" ? "#10b981" : "#3b82f6";
@@ -138,15 +138,6 @@ const pageTitle = `${identity.fullName} - ${headline.title}`;
         </div>
       </section>
 
-      <!-- Stats strip -->
-      <!-- <section class="grid grid-cols-2 sm:grid-cols-4 border-b-2 border-black">
-        {stats.map((s, i) => (
-          <div class={`p-6 sm:p-8 ${i < stats.length - 1 ? "sm:border-r-2 border-black" : ""} ${i % 2 === 1 ? "bg-black text-yellow-200" : ""}`}>
-            <p class="display text-5xl sm:text-7xl tabular-nums">{s.value}</p>
-            <p class="mt-2 text-[10px] sm:text-xs uppercase tracking-widest opacity-80">{s.label}</p>
-          </div>
-        ))}
-      </section> -->
 
       <section class="py-6 sm:py-12 border-b border-black grid sm:grid-cols-[0.5fr_1fr] gap-4">
         <h2 class="display text-5xl uppercase font-semibold! tracking-widest section-num" data-num="[01]">
@@ -256,39 +247,6 @@ const pageTitle = `${identity.fullName} - ${headline.title}`;
         </div>
       </section>
 
-      <!-- Awards + Education -->
-      <section class="py-6 sm:py-12 border-b border-black grid sm:grid-cols-2 gap-12">
-        <div>
-          <h2 class="display text-4xl uppercase mb-8 font-semibold! tracking-widest section-num" data-num="[05]">
-            Awards<span class="accent">.</span>
-          </h2>
-          <ul class="space-y-4">
-            {awards.map((a) => (
-              <li>
-                <p class="text-xs uppercase tracking-widest accent font-bold">{a.year}</p>
-                <p class="text-base font-bold leading-snug mt-1">{a.title}</p>
-                {a.sub && <p class="text-sm opacity-70">{a.sub}</p>}
-              </li>
-            ))}
-          </ul>
-        </div>
-        <div>
-          <h2 class="display text-4xl uppercase mb-8 font-semibold! tracking-widest section-num" data-num="[06]">
-            Education<span class="accent">.</span>
-          </h2>
-          <ul class="space-y-6">
-            {education.map((e) => (
-              <li>
-                <p class="text-xs uppercase tracking-widest accent font-bold">{e.period}</p>
-                <p class="text-lg font-bold leading-snug mt-1">{e.title}</p>
-                <p class="text-sm">{e.field}</p>
-                <p class="text-sm opacity-70 mt-0.5">{e.school}</p>
-                <p class="text-xs opacity-60 mt-1 leading-relaxed">{e.detail}</p>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
 
       <!-- Contact / Footer -->
       <section class="py-6 sm:py-12 grid sm:grid-cols-2 gap-4">

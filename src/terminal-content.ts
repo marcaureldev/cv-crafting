@@ -6,10 +6,6 @@ export const banner =
   " ) D ( (_ \\ \\ \\/ /  ) _)( (__\n" +
   "(____/(___/  \\__/  (____)\\___)\n";
 
-export const statsLines = cv.stats
-  .map((s) => "  " + s.value.padEnd(4) + " " + s.label)
-  .join("\n");
-
 function buildExperienceBlock() {
   const out = ["["];
   cv.experience.forEach((j, idx) => {
