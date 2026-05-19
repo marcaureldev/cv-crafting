@@ -14,6 +14,12 @@ const {
 } = Astro.props;
 ---
 
+<script is:inline>
+  if (typeof location !== "undefined" && location.search.indexOf("export=pdf") !== -1) {
+    document.documentElement.classList.add("pdf-export-mode");
+  }
+</script>
+
 <!-- Trigger button (floating bottom-right) -->
 <button
   id="pdf-export-trigger"
@@ -216,6 +222,12 @@ const {
 </div>
 
 <style define:vars={{ accent, accentDeep }}>
+  /* Quand la page est rendue par ConvertAPI (?export=pdf), on cache trigger + modal */
+  :global(html.pdf-export-mode) .pdf-trigger,
+  :global(html.pdf-export-mode) .pdf-modal {
+    display: none !important;
+  }
+
   .pdf-trigger {
     position: fixed;
     bottom: 24px;
