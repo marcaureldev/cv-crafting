@@ -1,0 +1,654 @@
+---
+interface Props {
+  path: string;
+  filename?: string;
+  accent?: string;
+  accentDeep?: string;
+}
+
+const {
+  path,
+  filename = "cv.pdf",
+  accent = "#aa7f56",
+  accentDeep = "#8e6843",
+} = Astro.props;
+---
+
+<!-- Trigger button (floating bottom-right) -->
+<button
+  id="pdf-export-trigger"
+  type="button"
+  class="pdf-trigger"
+  aria-label="Ouvrir la configuration d'export PDF"
+>
+  <iconify-icon icon="lucide:file-down"></iconify-icon>
+  <span>Télécharger en PDF</span>
+</button>
+
+<!-- Modal -->
+<div id="pdf-export-modal" class="pdf-modal" hidden>
+  <div class="pdf-modal-backdrop" data-close></div>
+  <div
+    class="pdf-modal-card"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="pdf-modal-title"
+  >
+    <header class="pdf-modal-header">
+      <h2 id="pdf-modal-title">Export PDF — paramètres</h2>
+      <button
+        type="button"
+        class="pdf-modal-close"
+        data-close
+        aria-label="Fermer"
+      >
+        <iconify-icon icon="lucide:x"></iconify-icon>
+      </button>
+    </header>
+
+    <form id="pdf-export-form" class="pdf-modal-body">
+      <div class="pdf-grid">
+        <!-- Page size -->
+        <section class="pdf-section">
+          <h3>Format de page</h3>
+          <select name="pageSize" id="pdf-pageSize" required>
+            <option value="a3">A3 (297 × 420 mm)</option>
+            <option value="a4" selected>A4 (210 × 297 mm)</option>
+            <option value="a5">A5 (148 × 210 mm)</option>
+            <option value="letter">Letter (216 × 279 mm)</option>
+            <option value="legal">Legal (216 × 356 mm)</option>
+            <option value="custom">Personnalisé...</option>
+          </select>
+          <div class="pdf-custom-size" id="pdf-customSize" hidden>
+            <label>
+              <span>Largeur (mm)</span>
+              <input
+                type="number"
+                name="pageWidth"
+                min="50"
+                max="1000"
+                step="1"
+                value="210"
+              />
+            </label>
+            <label>
+              <span>Hauteur (mm)</span>
+              <input
+                type="number"
+                name="pageHeight"
+                min="50"
+                max="1500"
+                step="1"
+                value="297"
+              />
+            </label>
+          </div>
+        </section>
+
+        <!-- Orientation -->
+        <section class="pdf-section">
+          <h3>Orientation</h3>
+          <div class="pdf-orientation">
+            <label class="pdf-orient-option">
+              <input
+                type="radio"
+                name="orientation"
+                value="portrait"
+                checked
+              />
+              <span class="pdf-orient-visual portrait">
+                <iconify-icon icon="lucide:file"></iconify-icon>
+              </span>
+              <span>Portrait</span>
+            </label>
+            <label class="pdf-orient-option">
+              <input type="radio" name="orientation" value="landscape" />
+              <span class="pdf-orient-visual landscape">
+                <iconify-icon icon="lucide:file"></iconify-icon>
+              </span>
+              <span>Paysage</span>
+            </label>
+          </div>
+        </section>
+
+        <!-- Margins -->
+        <section class="pdf-section">
+          <h3>Marges (mm)</h3>
+          <div class="pdf-margins">
+            <label class="pdf-margin pdf-margin-top">
+              <span>Haut</span>
+              <input
+                type="number"
+                name="marginTop"
+                min="0"
+                max="100"
+                step="1"
+                value="10"
+              />
+            </label>
+            <label class="pdf-margin pdf-margin-left">
+              <span>Gauche</span>
+              <input
+                type="number"
+                name="marginLeft"
+                min="0"
+                max="100"
+                step="1"
+                value="10"
+              />
+            </label>
+            <div class="pdf-margin-preview" aria-hidden="true">
+              <div class="pdf-margin-preview-inner"></div>
+            </div>
+            <label class="pdf-margin pdf-margin-right">
+              <span>Droite</span>
+              <input
+                type="number"
+                name="marginRight"
+                min="0"
+                max="100"
+                step="1"
+                value="10"
+              />
+            </label>
+            <label class="pdf-margin pdf-margin-bottom">
+              <span>Bas</span>
+              <input
+                type="number"
+                name="marginBottom"
+                min="0"
+                max="100"
+                step="1"
+                value="10"
+              />
+            </label>
+          </div>
+        </section>
+
+        <!-- Scale -->
+        <section class="pdf-section">
+          <h3>Échelle (%)</h3>
+          <input
+            type="number"
+            name="scale"
+            id="pdf-scale"
+            min="10"
+            max="200"
+            step="5"
+            value="100"
+            required
+          />
+          <p class="pdf-hint">10 à 200 %. 100 = taille naturelle.</p>
+        </section>
+
+        <!-- Page range -->
+        <section class="pdf-section pdf-section-wide">
+          <h3>Plage de pages</h3>
+          <input
+            type="text"
+            name="pageRange"
+            id="pdf-pageRange"
+            placeholder="Ex: 1-5 ou 1,3,7 (vide = toutes)"
+            pattern="^[0-9,\-\s]*$"
+          />
+          <p class="pdf-hint">Optionnel. Laisse vide pour exporter toutes les pages.</p>
+        </section>
+      </div>
+
+      <footer class="pdf-modal-footer">
+        <div id="pdf-status" class="pdf-status" aria-live="polite"></div>
+        <div class="pdf-actions">
+          <button type="button" class="pdf-btn pdf-btn-secondary" data-close>
+            Annuler
+          </button>
+          <button
+            type="submit"
+            class="pdf-btn pdf-btn-primary"
+            id="pdf-submit"
+          >
+            <iconify-icon icon="lucide:download"></iconify-icon>
+            Générer le PDF
+          </button>
+        </div>
+      </footer>
+    </form>
+  </div>
+</div>
+
+<style define:vars={{ accent, accentDeep }}>
+  .pdf-trigger {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 18px;
+    background: var(--accent);
+    color: #fff;
+    border: 2px solid var(--accentDeep);
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    box-shadow: 4px 4px 0 0 #061321;
+    transition: transform 120ms ease, box-shadow 120ms ease;
+  }
+  .pdf-trigger:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 0 #061321;
+  }
+  .pdf-trigger:active {
+    transform: translate(0, 0);
+    box-shadow: 2px 2px 0 0 #061321;
+  }
+  .pdf-trigger iconify-icon {
+    font-size: 18px;
+  }
+
+  .pdf-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+  }
+  .pdf-modal[hidden] {
+    display: none;
+  }
+  .pdf-modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(6, 19, 33, 0.5);
+    backdrop-filter: blur(4px);
+  }
+  .pdf-modal-card {
+    position: relative;
+    background: #fafaf8;
+    border: 3px solid #061321;
+    width: min(880px, 100%);
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 8px 8px 0 0 var(--accentDeep);
+    font-family: "Satoshi", ui-sans-serif, system-ui, sans-serif;
+    color: #061321;
+  }
+
+  .pdf-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 24px;
+    border-bottom: 2px solid #061321;
+    background: #fff;
+  }
+  .pdf-modal-header h2 {
+    margin: 0;
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--accent);
+  }
+  .pdf-modal-close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: transparent;
+    border: 1px solid rgba(6, 19, 33, 0.15);
+    color: #061321;
+    cursor: pointer;
+    transition: background-color 120ms ease, color 120ms ease;
+  }
+  .pdf-modal-close:hover {
+    background: #061321;
+    color: #fafaf8;
+  }
+  .pdf-modal-close iconify-icon {
+    font-size: 18px;
+  }
+
+  .pdf-modal-body {
+    padding: 24px;
+  }
+
+  .pdf-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px 32px;
+  }
+  @media (max-width: 640px) {
+    .pdf-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .pdf-section {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .pdf-section-wide {
+    grid-column: 1 / -1;
+  }
+  .pdf-section h3 {
+    margin: 0;
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: rgba(6, 19, 33, 0.6);
+  }
+  .pdf-section input[type="text"],
+  .pdf-section input[type="number"],
+  .pdf-section select {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 14px;
+    padding: 8px 10px;
+    background: #fff;
+    border: 1px solid rgba(6, 19, 33, 0.25);
+    color: #061321;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .pdf-section input:focus,
+  .pdf-section select:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(170, 127, 86, 0.2);
+  }
+  .pdf-hint {
+    margin: 0;
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 11px;
+    color: rgba(6, 19, 33, 0.5);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .pdf-custom-size {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .pdf-custom-size label {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .pdf-custom-size label > span {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: rgba(6, 19, 33, 0.6);
+  }
+
+  .pdf-orientation {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .pdf-orient-option {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 14px 8px;
+    border: 1px solid rgba(6, 19, 33, 0.25);
+    background: #fff;
+    cursor: pointer;
+    transition: border-color 120ms ease, background-color 120ms ease;
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  .pdf-orient-option input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .pdf-orient-option:has(input[type="radio"]:checked) {
+    border-color: var(--accentDeep);
+    background: var(--accent);
+    color: #fff;
+  }
+  .pdf-orient-visual {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+  }
+  .pdf-orient-visual.landscape {
+    transform: rotate(90deg);
+  }
+
+  .pdf-margins {
+    display: grid;
+    grid-template-columns: 1fr 90px 1fr;
+    grid-template-rows: auto auto auto;
+    gap: 6px;
+    align-items: center;
+    justify-items: center;
+  }
+  .pdf-margin {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    width: 70px;
+  }
+  .pdf-margin > span {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: rgba(6, 19, 33, 0.6);
+  }
+  .pdf-margin > input {
+    text-align: center;
+    padding: 6px 4px !important;
+  }
+  .pdf-margin-top {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  .pdf-margin-left {
+    grid-column: 1;
+    grid-row: 2;
+  }
+  .pdf-margin-right {
+    grid-column: 3;
+    grid-row: 2;
+  }
+  .pdf-margin-bottom {
+    grid-column: 2;
+    grid-row: 3;
+  }
+  .pdf-margin-preview {
+    grid-column: 2;
+    grid-row: 2;
+    width: 80px;
+    height: 60px;
+    background: #fff;
+    border: 1.5px solid #061321;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .pdf-margin-preview-inner {
+    width: 70%;
+    height: 60%;
+    border: 1px dashed rgba(6, 19, 33, 0.3);
+  }
+
+  .pdf-modal-footer {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 24px;
+    padding-top: 18px;
+    border-top: 2px solid rgba(6, 19, 33, 0.15);
+  }
+  .pdf-status {
+    min-height: 20px;
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 12px;
+  }
+  .pdf-status.error {
+    color: #b91c1c;
+  }
+  .pdf-status.loading {
+    color: var(--accent);
+  }
+  .pdf-status.success {
+    color: #047857;
+  }
+  .pdf-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+  }
+  .pdf-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    border: 2px solid #061321;
+    transition: transform 80ms ease, box-shadow 80ms ease;
+  }
+  .pdf-btn:hover:not(:disabled) {
+    transform: translate(-1px, -1px);
+    box-shadow: 3px 3px 0 0 #061321;
+  }
+  .pdf-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  .pdf-btn-secondary {
+    background: #fff;
+    color: #061321;
+  }
+  .pdf-btn-primary {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accentDeep);
+  }
+  .pdf-btn-primary:hover:not(:disabled) {
+    box-shadow: 3px 3px 0 0 var(--accentDeep);
+  }
+</style>
+
+<script define:vars={{ path, filename }}>
+  const trigger = document.getElementById("pdf-export-trigger");
+  const modal = document.getElementById("pdf-export-modal");
+  const form = document.getElementById("pdf-export-form");
+  const status = document.getElementById("pdf-status");
+  const submitBtn = document.getElementById("pdf-submit");
+  const pageSizeSelect = document.getElementById("pdf-pageSize");
+  const customSize = document.getElementById("pdf-customSize");
+
+  if (!trigger || !modal || !form) return;
+
+  function openModal() {
+    modal.hidden = false;
+    document.body.style.overflow = "hidden";
+  }
+  function closeModal() {
+    modal.hidden = true;
+    document.body.style.overflow = "";
+    status.textContent = "";
+    status.className = "pdf-status";
+  }
+
+  trigger.addEventListener("click", openModal);
+
+  modal.querySelectorAll("[data-close]").forEach((el) => {
+    el.addEventListener("click", closeModal);
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && !modal.hidden) closeModal();
+  });
+
+  pageSizeSelect.addEventListener("change", () => {
+    customSize.hidden = pageSizeSelect.value !== "custom";
+  });
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const formData = new FormData(form);
+
+    const payload = {
+      path,
+      filename,
+      pageSize: formData.get("pageSize"),
+      orientation: formData.get("orientation"),
+      margins: {
+        top: Number(formData.get("marginTop")) || 0,
+        right: Number(formData.get("marginRight")) || 0,
+        bottom: Number(formData.get("marginBottom")) || 0,
+        left: Number(formData.get("marginLeft")) || 0,
+      },
+      scale: Number(formData.get("scale")) || 100,
+      pageRange: (formData.get("pageRange") || "").trim() || undefined,
+    };
+
+    if (payload.pageSize === "custom") {
+      payload.pageWidth = Number(formData.get("pageWidth")) || 210;
+      payload.pageHeight = Number(formData.get("pageHeight")) || 297;
+    }
+
+    submitBtn.disabled = true;
+    status.textContent = "Génération en cours...";
+    status.className = "pdf-status loading";
+
+    try {
+      const res = await fetch("/api/generate-pdf", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) {
+        const errBody = await res.json().catch(() => ({ error: "Erreur inconnue" }));
+        throw new Error(errBody.error || `HTTP ${res.status}`);
+      }
+
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+
+      status.textContent = "PDF téléchargé.";
+      status.className = "pdf-status success";
+      setTimeout(closeModal, 1200);
+    } catch (err) {
+      status.textContent = err.message || "Erreur lors de la génération.";
+      status.className = "pdf-status error";
+    } finally {
+      submitBtn.disabled = false;
+    }
+  });
+</script>

@@ -1,5 +1,8 @@
 ---
+export const prerender = true;
+
 import "../styles/global.css";
+import PdfExportButton from "../components/PdfExportButton.astro";
 import { getCV } from "../content";
 
 const cv = getCV("react");
@@ -23,6 +26,7 @@ const lastName = identity.fullName.replace(identity.firstName, "").trim();
 
     <style>
       @import url("https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@100,200,300,400,500,700,800,900&f[]=satoshi@300,400,500,700,900&display=swap");
+      @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
 
       :root {
         --ink: #061321;
@@ -33,6 +37,7 @@ const lastName = identity.fullName.replace(identity.firstName, "").trim();
         --blue-deep: #1d4ed8;
         --font-display: "Cabinet Grotesk", ui-sans-serif, system-ui, sans-serif;
         --font-body: "Satoshi", ui-sans-serif, system-ui, sans-serif;
+        --font-playfair: "Playfair Display", serif;
       }
 
       body {
@@ -48,6 +53,9 @@ const lastName = identity.fullName.replace(identity.firstName, "").trim();
 
       .font-serif-d {
         font-family: var(--font-display);
+      }
+      .font-playfair {
+        font-family: var(--font-playfair);
       }
       .font-body {
         font-family: var(--font-body);
@@ -116,16 +124,10 @@ const lastName = identity.fullName.replace(identity.firstName, "").trim();
     <div class="min-h-screen bg-paper text-ink">
       <!-- Main grid container -->
       <main class="max-w-[1440px] mx-auto border-x border-ink-border flex flex-col">
-        <!-- TOP BAR IDENTITY -->
         <header
           class="flex flex-col md:flex-row justify-between items-start md:items-center p-4 md:p-6 border-b border-ink-border font-mono text-sm tracking-widest gap-4"
         >
           <div class="flex flex-col gap-2 items-start">
-            <h1
-              class="font-bold text-blue border border-blue-deep bg-white px-3 py-1.5 inline-block w-max"
-            >
-              Spec // React &amp; Next.js
-            </h1>
             <span class="text-blue">@{identity.handle}</span>
           </div>
           <div class="flex flex-col md:text-right gap-1 text-ink-soft">
@@ -140,7 +142,6 @@ const lastName = identity.fullName.replace(identity.firstName, "").trim();
           </div>
         </header>
 
-        <!-- HERO SECTION -->
         <section
           class="grid grid-cols-1 lg:grid-cols-12 divide-y lg:divide-y-0 lg:divide-x divide-ink-border border-b border-ink-border relative overflow-hidden"
         >
@@ -151,17 +152,17 @@ const lastName = identity.fullName.replace(identity.firstName, "").trim();
             {identity.firstName} {lastName}
             </div>
             <h2
-              class="text-7xl leading-24 tracking-tight font-bold! uppercase text-ink mt-12"
+              class="text-7xl leading-24 tracking-tight font-bold! uppercase text-ink mt-12 font-playfair"
             >
               React &amp; Next.js <br />
-              <span class="text-blue italic font-light lowercase">frontend</span>
+              <span class="text-blue font-light font-playfair lowercase">frontend</span>
               <br />
               Developer
             </h2>
 
             <div class="mt-6 max-w-2xl">
               <p class="text-xl md:text-2xl text-ink leading-snug mb-4">
-                I ship modern, <span class="text-blue italic">performant</span> React apps.
+                I ship modern, <span class="text-blue">performant</span> React apps.
               </p>
               <p class="font-mono text-sm text-ink-soft uppercase tracking-widest">
                 Next.js &middot; React &middot; Tailwind &middot; TypeScript <br />
@@ -293,7 +294,7 @@ const lastName = identity.fullName.replace(identity.firstName, "").trim();
             <div class="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-ink-border h-full">
               <div class="flex flex-col divide-y divide-ink-border md:border-r md:border-ink-border">
                 {skills.slice(0, 2).map((cat, idx) => (
-                  <div class="p-6 md:p-8 flex-1">
+                  <div class="p-6 flex-1">
                     <h5 class="font-serif-d text-2xl text-ink mb-6">{cat.label}</h5>
                     <ul class="font-mono text-sm text-ink-soft space-y-3">
                       {cat.items.map((s) => (
@@ -373,9 +374,8 @@ const lastName = identity.fullName.replace(identity.firstName, "").trim();
           </div>
         </section>
 
-        <!-- FOOTER CONTACT MATRIX -->
         <footer
-          class="grid grid-cols-2 md:grid-cols-5 divide-y md:divide-y-0 divide-x divide-ink-border bg-white md:bg-transparent"
+          class="grid grid-cols-2 md:grid-cols-5 divide-y md:divide-y-0 divide-x divide-ink-border bg-white md:bg-transparent border-b border-ink-border"
         >
           <a
             href={`mailto:${identity.email}`}
@@ -426,5 +426,12 @@ const lastName = identity.fullName.replace(identity.firstName, "").trim();
         </footer>
       </main>
     </div>
+
+    <PdfExportButton
+      path="/light-neo-brutalist-react"
+      filename="Marc-Aurel-AHOUANDJINOU-CV-React.pdf"
+      accent="#3b82f6"
+      accentDeep="#1d4ed8"
+    />
   </body>
 </html>
