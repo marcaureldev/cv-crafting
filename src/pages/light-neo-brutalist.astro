@@ -177,7 +177,7 @@ const lastName = identity.fullName.replace(identity.firstName, "").trim();
 
 
         <!-- EXPERIENCE -->
-        <section class="border-b border-ink-border">
+        <section data-pdf-break="experience" class="border-b border-ink-border">
           <div class="p-4 md:p-6 border-b border-ink-border bg-white">
             <h3 class="font-mono text-xl md:text-2xl uppercase tracking-widest text-caramel flex items-center gap-3">
               <iconify-icon icon="lucide:briefcase"></iconify-icon>
@@ -215,6 +215,7 @@ const lastName = identity.fullName.replace(identity.firstName, "").trim();
 
         <!-- PROJECTS + SKILLS -->
         <section
+          data-pdf-break="projects"
           class="grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-ink-border border-b border-ink-border"
         >
           <!-- PROJECTS -->
@@ -312,6 +313,7 @@ const lastName = identity.fullName.replace(identity.firstName, "").trim();
 
         <!-- EDUCATION + AWARDS -->
         <section
+          data-pdf-break="education"
           class="grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-ink-border border-b border-ink-border"
         >
           <!-- EDUCATION -->
@@ -338,6 +340,7 @@ const lastName = identity.fullName.replace(identity.firstName, "").trim();
 
         <!-- FOOTER CONTACT MATRIX -->
         <footer
+          data-pdf-break="footer"
           class="grid grid-cols-2 md:grid-cols-5 divide-y md:divide-y-0 divide-x divide-ink-border bg-white md:bg-transparent border-b border-ink-border"
         >
           <a

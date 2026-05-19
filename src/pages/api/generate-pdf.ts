@@ -21,7 +21,11 @@ interface GeneratePdfRequest {
   scale: number;
   pageRange?: string;
   filename?: string;
+  /** Slug d'une section avec attribut `data-pdf-break` à forcer en début de page. */
+  breakSection?: string;
 }
+
+const ALLOWED_BREAK_SECTIONS = new Set(["experience", "projects", "education", "footer"]);
 
 function jsonError(message: string, status: number, extra?: Record<string, unknown>) {
   return new Response(JSON.stringify({ error: message, ...extra }), {
@@ -52,8 +56,13 @@ export const POST: APIRoute = async ({ request }) => {
 
   const origin = new URL(request.url).origin;
   // ?export=pdf signale à la page qu'elle est rendue pour ConvertAPI
-  // (le composant PdfExportButton masque son trigger et sa modal sur ce flag)
-  const targetUrl = `${origin}${body.path}?export=pdf`;
+  // (le composant PdfExportButton masque son trigger et sa modal sur ce flag).
+  // ?break=<section> demande au script inline de poser `break-before: page` sur la section.
+  const urlParams = new URLSearchParams({ export: "pdf" });
+  if (body.breakSection && ALLOWED_BREAK_SECTIONS.has(body.breakSection)) {
+    urlParams.set("break", body.breakSection);
+  }
+  const targetUrl = `${origin}${body.path}?${urlParams.toString()}`;
 
   // ConvertAPI tourne sur leurs serveurs, donc l'URL doit être publique. localhost n'est pas joignable.
   if (/^https?:\/\/(localhost|127\.0\.0\.1|0\.0\.0\.0)/.test(targetUrl)) {
