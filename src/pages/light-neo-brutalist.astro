@@ -1,5 +1,8 @@
 ---
+export const prerender = true;
+
 import "../styles/global.css";
+import PdfExportButton from "../components/PdfExportButton.astro";
 import { getCV } from "../content";
 
 const cv = getCV("vue");
@@ -419,5 +422,12 @@ const lastName = identity.fullName.replace(identity.firstName, "").trim();
         </footer>
       </main>
     </div>
+
+    <PdfExportButton
+      path="/light-neo-brutalist"
+      filename="Marc-Aurel-AHOUANDJINOU-CV-Vue.pdf"
+      accent="#aa7f56"
+      accentDeep="#8e6843"
+    />
   </body>
 </html>

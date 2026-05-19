@@ -62,9 +62,9 @@ const about: Record<Variant, string[]> = {
     "J'apprends vite, je livre, je documente.",
   ],
   react: [
-    "Je suis Marc-Aurel, développeur frontend spécialisé sur l'écosystème React/Next.js.",
-    "Je conçois et développe des applications web modernes avec Next.js App Router, Tailwind et TypeScript : de l'intégration design à l'authentification en passant par Prisma et la gestion d'état.",
-    "27h de code par semaine en moyenne, Cursor comme éditeur principal. J'apprends vite, je livre, je documente.",
+    "Je suis Marc-Aurel, développeur frontend spécialisé en React et Next.js, orienté vers la création d’applications web dynamiques, scalables et optimisées pour les performances et le SEO.",
+    "J'applique les bonnes pratiques du développement Front-End, notamment l’optimisation des performances, la structuration du code et l’intégration d’API, tout en maintenant une veille technologique active sur l’écosystème React et Next.js",
+    "J'apprends vite, je livre, je documente.",
   ],
 };
 
@@ -208,15 +208,6 @@ const projects: Record<Variant, Project[]> = {
       live: "food-restaurant-aurel.vercel.app",
     },
     {
-      name: "T-Shirt Landing Page",
-      tagline: "Landing page e-commerce orientée conversion",
-      description:
-        "Conception d’une landing page moderne pour une marque de t-shirts avec focus sur l’expérience utilisateur et la conversion. Mise en place d’un design responsive, sections produit, call-to-action optimisés et animations légères pour améliorer l’engagement.",
-      stack: ["HTML", "Tailwind CSS", "JavaScript"],
-      live: "tshirst-landing-page.vercel.app",
-      link: "github.com/marcaureldev/Tshirst_landing_page",
-    },
-    {
       name: "TokenaWebApp",
       tagline: "Figma vers code, crypto app temps réel",
       description:
@@ -235,13 +226,13 @@ const projects: Record<Variant, Project[]> = {
       link: "github.com/marcaureldev/colisync-project",
     },
     {
-      name: "African Basketball League",
-      tagline: "Plateforme web, ligue de basketball africaine",
+      name: "BeninTrip",
+      tagline: "Plateforme de découverte touristique du Bénin",
       description:
-        "App Next.js avec animations Motion (Framer), UI Radix, design moderne. Déployé sur Vercel.",
-      stack: ["Next.js", "TypeScript", "Tailwind", "Radix UI", "Motion"],
-      link: "github.com/marcaureldev/afircan-basketball-league",
-      live: "african-basketball-league.vercel.app",
+      "Projet collaboratif de développement d’une application web dédiée à la promotion du tourisme au Bénin. Participation à la conception et au développement d’une interface moderne et responsive permettant de découvrir des destinations et expériences locales, avec un focus sur l’expérience utilisateur.",
+      stack: ["Next.js", "TypeScript", "Tailwind CSS", "Convex"],
+      link: "github.com/ines-abike/MVP-CodeTeam",
+      live: "benintrip.vercel.app",
     },
     {
       name: "Gestion Factures",
