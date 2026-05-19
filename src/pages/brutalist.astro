@@ -86,16 +86,6 @@ import { cv } from "../content";
         </p>
       </section>
 
-      <!-- Stats strip -->
-      <section class="grid grid-cols-2 sm:grid-cols-4 border-b-2 border-black">
-        {cv.stats.map((s, i) => (
-          <div class={`p-6 ${i < cv.stats.length - 1 ? "border-r-2 border-black" : ""} ${i % 2 === 1 ? "bg-black text-yellow-200" : ""}`}>
-            <p class="display text-6xl">{s.value}</p>
-            <p class="mt-2 text-xs uppercase tracking-widest">{s.label}</p>
-          </div>
-        ))}
-      </section>
-
       <!-- About -->
       <section class="py-12 border-b-2 border-black grid sm:grid-cols-[1fr_2fr] gap-8">
         <h2 class="display text-5xl uppercase">

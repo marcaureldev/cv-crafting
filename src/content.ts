@@ -33,24 +33,8 @@ const headlines: Record<Variant, { title: string; tagline: string; sub: string }
   react: {
     title: "React & Next.js Frontend Developer",
     tagline: "I ship modern, performant React apps.",
-    sub: "Next.js · React · Tailwind · TypeScript. App Router, Server Components, full integration.",
+    sub: "Next.js - React - Tailwind - TypeScript. App Router, Server Components.",
   },
-};
-
-// ─── Stats hero (4 chiffres XXL) ──────────────────────────────────────
-const stats: Record<Variant, { value: string; label: string }[]> = {
-  vue: [
-    { value: "2", label: "ans de code" },
-    { value: "42", label: "repos github" },
-    { value: "27h", label: "code / semaine" },
-    { value: "5", label: "récompenses" },
-  ],
-  react: [
-    { value: "2", label: "ans de code" },
-    { value: "3", label: "apps Next.js déployées" },
-    { value: "27h", label: "code / semaine" },
-    { value: "5", label: "récompenses" },
-  ],
 };
 
 // ─── About (paragraphe d'intro) ───────────────────────────────────────
@@ -164,13 +148,11 @@ const experiences: Experience[] = [
       vue: [
         "Maquettes UI/UX vers code Vue.js modulaire",
         "Style avec Tailwind CSS",
-        "Communication avec une API REST pour données dynamiques",
         "Cohérence entre interfaces et logique métier",
       ],
       react: [
         "Maquettes UI/UX vers code interactif modulaire",
         "Style avec Tailwind CSS",
-        "Communication avec une API REST pour données dynamiques",
         "Cohérence entre interfaces et logique métier",
       ],
     },
@@ -285,18 +267,18 @@ const skills: Record<Variant, { label: string; items: string[] }[]> = {
   ],
 };
 
-// ─── Awards (partagés) ────────────────────────────────────────────────
-const awards = [
-  { year: "2024", title: "3e Prix : Hackathon Innovation Hub Parakou" },
-  { year: "2024", title: "2e Prix : Concours d'Innovation CDE Parakou" },
-  {
-    year: "2024",
-    title: "Prix d'Excellence : Initiative La Ceinture et la Route de la Soie",
-    sub: "Ambassade de la République Populaire de Chine au Bénin",
-  },
-  { year: "2024", title: "Certificat de Reconnaissance : Innovation & Engagement", sub: "IUT, Université de Parakou" },
-  { year: "2024", title: "Certificat de Mérite : Figma to Code Challenge Bénin" },
-];
+// // ─── Awards (partagés) ────────────────────────────────────────────────
+// const awards = [
+//   { year: "2024", title: "3e Prix : Hackathon Innovation Hub Parakou" },
+//   { year: "2024", title: "2e Prix : Concours d'Innovation CDE Parakou" },
+//   {
+//     year: "2024",
+//     title: "Prix d'Excellence : Initiative La Ceinture et la Route de la Soie",
+//     sub: "Ambassade de la République Populaire de Chine au Bénin",
+//   },
+//   { year: "2024", title: "Certificat de Reconnaissance : Innovation & Engagement", sub: "IUT, Université de Parakou" },
+//   { year: "2024", title: "Certificat de Mérite : Figma to Code Challenge Bénin" },
+// ];
 
 // ─── Éducation (partagée) ─────────────────────────────────────────────
 const education = [
@@ -329,12 +311,10 @@ export function getCV(variant: Variant) {
     variant,
     identity,
     headline: headlines[variant],
-    stats: stats[variant],
     about: about[variant],
     experiences: experiences.filter((e) => e.showIn.includes(variant)),
     projects: projects[variant],
     skills: skills[variant],
-    awards,
     education,
     wakatime,
   };
@@ -360,7 +340,6 @@ export const cv = {
     linkedin: identity.linkedin,
   },
   about: _v.about,
-  stats: _v.stats,
   experience: _v.experiences.map((e) => ({
     period: e.period,
     role: e.role,

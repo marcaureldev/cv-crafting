@@ -6,7 +6,6 @@ import PrintBar from "../components/PrintBar.astro";
 import { cv } from "../content";
 import {
   banner,
-  statsLines,
   experienceBlock,
   projectLines,
   skillsBlock,
@@ -52,11 +51,6 @@ import {
       <section class="mt-8">
         <p class="prompt">cat about.txt</p>
         {cv.about.map((p) => <p class="mt-1">{p}</p>)}
-      </section>
-
-      <section class="mt-8">
-        <p class="prompt">./stats --pretty</p>
-        <pre class="mt-1">{statsLines}</pre>
       </section>
 
       <section class="mt-8">

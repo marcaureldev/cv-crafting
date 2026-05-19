@@ -6,7 +6,7 @@ import PdfExportButton from "../components/PdfExportButton.astro";
 import { getCV } from "../content";
 
 const cv = getCV("vue");
-const { identity, headline, stats, about, experiences, projects, skills, awards, education } = cv;
+const { identity, headline, about, experiences, projects, skills, education } = cv;
 const pageTitle = `${identity.fullName} - ${headline.title}`;
 const lastName = identity.fullName.replace(identity.firstName, "").trim();
 ---
@@ -175,17 +175,6 @@ const lastName = identity.fullName.replace(identity.firstName, "").trim();
           </div>
         </section>
 
-        <!-- STATS XXL -->
-        <!-- <section
-          class="grid grid-cols-2 lg:grid-cols-4 divide-x divide-y lg:divide-y-0 divide-ink-border border-b border-ink-border bg-white"
-        >
-          {stats.map((s) => (
-            <div class="stat-cell p-6 md:p-8 flex flex-col justify-center items-center text-center group">
-              <span class="stat-value font-mono text-5xl md:text-7xl font-bold text-caramel mb-2">{s.value}</span>
-              <span class="stat-label font-mono text-xs md:text-sm uppercase tracking-widest text-ink-soft">{s.label}</span>
-            </div>
-          ))}
-        </section> -->
 
         <!-- EXPERIENCE -->
         <section class="border-b border-ink-border">
@@ -345,28 +334,6 @@ const lastName = identity.fullName.replace(identity.firstName, "").trim();
             </div>
           </div>
 
-          <!-- AWARDS -->
-          <div class="flex flex-col">
-            <div class="p-4 md:p-6 border-b border-ink-border bg-white">
-              <h3 class="font-mono text-xl uppercase tracking-widest text-ink flex items-center gap-3">
-                <iconify-icon icon="lucide:award"></iconify-icon>
-                Récompenses
-              </h3>
-            </div>
-            <div class="p-6 md:p-8 hover:bg-white transition-colors h-full">
-              <ul class="space-y-6">
-                {awards.map((a) => (
-                  <li class="flex gap-4 items-start">
-                    <span class="font-mono text-caramel shrink-0">{a.year}</span>
-                    <div>
-                      <h4 class="font-serif-d text-xl text-ink leading-snug">{a.title}</h4>
-                      {a.sub && <p class="font-mono text-xs text-ink-soft mt-1">{a.sub}</p>}
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
         </section>
 
         <!-- FOOTER CONTACT MATRIX -->

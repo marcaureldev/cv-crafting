@@ -6,7 +6,7 @@ import PdfExportButton from "../components/PdfExportButton.astro";
 import { getCV } from "../content";
 
 const cv = getCV("react");
-const { identity, headline, stats, about, experiences, projects, skills, awards, education } = cv;
+const { identity, headline, about, experiences, projects, skills, education } = cv;
 const pageTitle = `${identity.fullName} - ${headline.title}`;
 const lastName = identity.fullName.replace(identity.firstName, "").trim();
 ---
@@ -26,7 +26,6 @@ const lastName = identity.fullName.replace(identity.firstName, "").trim();
 
     <style>
       @import url("https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@100,200,300,400,500,700,800,900&f[]=satoshi@300,400,500,700,900&display=swap");
-      @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
 
       :root {
         --ink: #061321;
@@ -37,7 +36,6 @@ const lastName = identity.fullName.replace(identity.firstName, "").trim();
         --blue-deep: #1d4ed8;
         --font-display: "Cabinet Grotesk", ui-sans-serif, system-ui, sans-serif;
         --font-body: "Satoshi", ui-sans-serif, system-ui, sans-serif;
-        --font-playfair: "Playfair Display", serif;
       }
 
       body {
@@ -53,9 +51,6 @@ const lastName = identity.fullName.replace(identity.firstName, "").trim();
 
       .font-serif-d {
         font-family: var(--font-display);
-      }
-      .font-playfair {
-        font-family: var(--font-playfair);
       }
       .font-body {
         font-family: var(--font-body);
@@ -135,43 +130,36 @@ const lastName = identity.fullName.replace(identity.firstName, "").trim();
               <iconify-icon icon="lucide:map-pin"></iconify-icon>
               <span>{identity.location}</span>
             </div>
-            <div class="flex items-center md:justify-end gap-2 text-blue">
+            <!-- <div class="flex items-center md:justify-end gap-2 text-blue">
               <iconify-icon icon="lucide:zap"></iconify-icon>
               <span>{identity.availability}</span>
-            </div>
+            </div> -->
           </div>
         </header>
 
         <section
           class="grid grid-cols-1 lg:grid-cols-12 divide-y lg:divide-y-0 lg:divide-x divide-ink-border border-b border-ink-border relative overflow-hidden"
         >
-          <div class="lg:col-span-7 p-6 md:p-12 lg:p-16 flex flex-col justify-center relative z-10">
+          <div class="lg:col-span-6 p-6 md:p-12 flex flex-col justify-center relative z-10">
             <div
-              class="font-bold text-blue text-2xl border border-blue-deep bg-white px-3 py-1.5 inline-block uppercase tracking-widest"
+              class="font-bold text-blue text-2xl px-3 py-1.5 inline-block capitalize tracking-widest"
             >
             {identity.firstName} {lastName}
             </div>
             <h2
-              class="text-7xl leading-24 tracking-tight font-bold! uppercase text-ink mt-12 font-playfair"
+              class="text-3xl leading-8 tracking-tight font-medium capitalize text-ink mt-4"
             >
-              React &amp; Next.js <br />
-              <span class="text-blue font-light font-playfair lowercase">frontend</span>
-              <br />
-              Developer
+            {headline.tagline}
             </h2>
 
             <div class="mt-6 max-w-2xl">
-              <p class="text-xl md:text-2xl text-ink leading-snug mb-4">
-                I ship modern, <span class="text-blue">performant</span> React apps.
-              </p>
-              <p class="font-mono text-sm text-ink-soft uppercase tracking-widest">
-                Next.js &middot; React &middot; Tailwind &middot; TypeScript <br />
-                App Router, Server Components, full integration.
+              <p class="text-base text-ink leading-snug mb-4">
+                {headline.sub}
               </p>
             </div>
           </div>
 
-          <div class="lg:col-span-5 p-6 md:p-12 flex flex-col justify-center bg-white relative z-10">
+          <div class="lg:col-span-6 p-6 md:p-12 flex flex-col justify-center bg-white relative z-10">
             <div class="border-l-4 border-blue-deep pl-6 flex flex-col gap-4">
               {about.map((p) => (
                 <p class="text-lg leading-relaxed text-ink/90">{p}</p>
@@ -180,22 +168,11 @@ const lastName = identity.fullName.replace(identity.firstName, "").trim();
           </div>
         </section>
 
-        <!-- STATS XXL -->
-        <!-- <section
-          class="grid grid-cols-2 lg:grid-cols-4 divide-x divide-y lg:divide-y-0 divide-ink-border border-b border-ink-border bg-white"
-        >
-          {stats.map((s) => (
-            <div class="stat-cell p-6 md:p-8 flex flex-col justify-center items-center text-center group">
-              <span class="stat-value font-mono text-5xl md:text-7xl font-bold text-blue mb-2">{s.value}</span>
-              <span class="stat-label font-mono text-xs md:text-sm uppercase tracking-widest text-ink-soft">{s.label}</span>
-            </div>
-          ))}
-        </section> -->
 
         <!-- EXPERIENCE -->
         <section class="border-b border-ink-border">
           <div class="p-4 md:p-6 border-b border-ink-border bg-white">
-            <h3 class="font-mono text-xl md:text-2xl uppercase tracking-widest text-blue flex items-center gap-3">
+            <h3 class="text-xl font-medium uppercase tracking-widest text-blue flex items-center gap-3">
               <iconify-icon icon="lucide:briefcase"></iconify-icon>
               Experience
             </h3>
@@ -328,7 +305,7 @@ const lastName = identity.fullName.replace(identity.firstName, "").trim();
 
         <!-- EDUCATION + AWARDS -->
         <section
-          class="grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-ink-border border-b border-ink-border"
+          class="divide-y divide-ink-border border-b border-ink-border"
         >
           <!-- EDUCATION -->
           <div class="flex flex-col">
@@ -338,7 +315,7 @@ const lastName = identity.fullName.replace(identity.firstName, "").trim();
                 Éducation
               </h3>
             </div>
-            <div class="flex flex-col divide-y divide-ink-border">
+            <div class="grid grid-cols-1 md:grid-cols-2 divide-x divide-ink-border">
               {education.map((e) => (
                 <div class="p-6 md:p-8 hover:bg-white transition-colors">
                   <div class="font-mono text-sm text-blue mb-2">{e.period}</div>
@@ -350,28 +327,6 @@ const lastName = identity.fullName.replace(identity.firstName, "").trim();
             </div>
           </div>
 
-          <!-- AWARDS -->
-          <div class="flex flex-col">
-            <div class="p-4 md:p-6 border-b border-ink-border bg-white">
-              <h3 class="font-mono text-xl uppercase tracking-widest text-ink flex items-center gap-3">
-                <iconify-icon icon="lucide:award"></iconify-icon>
-                Récompenses
-              </h3>
-            </div>
-            <div class="p-6 md:p-8 hover:bg-white transition-colors h-full">
-              <ul class="space-y-6">
-                {awards.map((a) => (
-                  <li class="flex gap-4 items-start">
-                    <span class="font-mono text-blue shrink-0">{a.year}</span>
-                    <div>
-                      <h4 class="font-serif-d text-xl text-ink leading-snug">{a.title}</h4>
-                      {a.sub && <p class="font-mono text-xs text-ink-soft mt-1">{a.sub}</p>}
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
         </section>
 
         <footer
@@ -389,7 +344,7 @@ const lastName = identity.fullName.replace(identity.firstName, "").trim();
             href={identity.githubUrl}
             target="_blank"
             rel="noopener"
-            class="contact-tile p-6 flex flex-col items-center justify-center gap-2 cursor-pointer text-center"
+            class="contact-tile p-4 flex flex-col items-center justify-center gap-2 cursor-pointer text-center"
           >
             <iconify-icon icon="lucide:github" class="contact-icon text-3xl text-blue"></iconify-icon>
             <span class="contact-label font-mono text-xs uppercase tracking-widest text-ink">GitHub</span>
@@ -399,7 +354,7 @@ const lastName = identity.fullName.replace(identity.firstName, "").trim();
             href={identity.linkedinUrl}
             target="_blank"
             rel="noopener"
-            class="contact-tile linkedin p-6 flex flex-col items-center justify-center gap-2 cursor-pointer text-center"
+            class="contact-tile linkedin p-4 flex flex-col items-center justify-center gap-2 cursor-pointer text-center"
           >
             <iconify-icon icon="lucide:linkedin" class="contact-icon text-3xl text-blue"></iconify-icon>
             <span class="contact-label font-mono text-xs uppercase tracking-widest text-ink">LinkedIn</span>
@@ -409,7 +364,7 @@ const lastName = identity.fullName.replace(identity.firstName, "").trim();
             href={identity.wakatimeUrl}
             target="_blank"
             rel="noopener"
-            class="contact-tile p-6 flex flex-col items-center justify-center gap-2 cursor-pointer text-center"
+            class="contact-tile p-4 flex flex-col items-center justify-center gap-2 cursor-pointer text-center"
           >
             <iconify-icon icon="lucide:clock" class="contact-icon text-3xl text-blue"></iconify-icon>
             <span class="contact-label font-mono text-xs uppercase tracking-widest text-ink">WakaTime</span>
@@ -417,7 +372,7 @@ const lastName = identity.fullName.replace(identity.firstName, "").trim();
           </a>
           <a
             href={`tel:${identity.phone.replace(/\s/g, "")}`}
-            class="contact-tile p-6 flex flex-col items-center justify-center gap-2 cursor-pointer text-center"
+            class="contact-tile p-4 flex flex-col items-center justify-center gap-2 cursor-pointer text-center"
           >
             <iconify-icon icon="lucide:phone" class="contact-icon text-3xl text-blue"></iconify-icon>
             <span class="contact-label font-mono text-xs uppercase tracking-widest text-ink">Phone</span>
