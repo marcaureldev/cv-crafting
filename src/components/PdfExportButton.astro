@@ -15,21 +15,54 @@ const {
 ---
 
 <script is:inline>
-  if (typeof location !== "undefined" && location.search.indexOf("export=pdf") !== -1) {
-    document.documentElement.classList.add("pdf-export-mode");
-  }
+  // Détection précoce : mode export ConvertAPI + saut de page forcé.
+  // Tout doit être en place AVANT que ConvertAPI ne capture, donc inline early.
+  (function () {
+    if (typeof location === "undefined") return;
+    var params = new URLSearchParams(location.search);
+    if (params.has("export") && params.get("export") === "pdf") {
+      document.documentElement.classList.add("pdf-export-mode");
+    }
+    var breakBefore = params.get("break");
+    if (breakBefore) {
+      // On attend que le DOM soit prêt pour cibler la section
+      var apply = function () {
+        var el = document.querySelector('[data-pdf-break="' + breakBefore + '"]');
+        if (el) el.classList.add("pdf-force-break");
+      };
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", apply);
+      } else {
+        apply();
+      }
+    }
+  })();
 </script>
 
-<!-- Trigger button (floating bottom-right) -->
-<button
-  id="pdf-export-trigger"
-  type="button"
-  class="pdf-trigger"
-  aria-label="Ouvrir la configuration d'export PDF"
->
-  <iconify-icon icon="lucide:file-down"></iconify-icon>
-  <span>Télécharger en PDF</span>
-</button>
+<!-- Floating action area (bottom-right) -->
+<div class="pdf-actions-floating">
+  <button
+    id="pdf-preview-toggle"
+    type="button"
+    class="pdf-trigger pdf-trigger-secondary"
+    aria-label="Activer l'aperçu de pagination"
+    aria-pressed="false"
+  >
+    <iconify-icon icon="lucide:rows-3"></iconify-icon>
+    <span class="pdf-preview-label-off">Aperçu pages</span>
+    <span class="pdf-preview-label-on">Aperçu actif (cliquer pour cacher)</span>
+  </button>
+
+  <button
+    id="pdf-export-trigger"
+    type="button"
+    class="pdf-trigger"
+    aria-label="Ouvrir la configuration d'export PDF"
+  >
+    <iconify-icon icon="lucide:file-down"></iconify-icon>
+    <span>Télécharger en PDF</span>
+  </button>
+</div>
 
 <!-- Modal -->
 <div id="pdf-export-modal" class="pdf-modal" hidden>
@@ -188,7 +221,7 @@ const {
         </section>
 
         <!-- Page range -->
-        <section class="pdf-section pdf-section-wide">
+        <section class="pdf-section">
           <h3>Plage de pages</h3>
           <input
             type="text"
@@ -198,6 +231,21 @@ const {
             pattern="^[0-9,\-\s]*$"
           />
           <p class="pdf-hint">Optionnel. Laisse vide pour exporter toutes les pages.</p>
+        </section>
+
+        <!-- Forced page break before section -->
+        <section class="pdf-section">
+          <h3>Forcer saut de page avant</h3>
+          <select name="breakSection" id="pdf-breakSection">
+            <option value="">Aucun (pagination naturelle)</option>
+            <option value="experience">Experience</option>
+            <option value="projects">Projects + Skills</option>
+            <option value="education">Education</option>
+            <option value="footer">Footer (contact)</option>
+          </select>
+          <p class="pdf-hint">
+            Force la section choisie à commencer sur une nouvelle page (évite les coupures malheureuses au milieu d'un bloc).
+          </p>
         </section>
       </div>
 
@@ -222,10 +270,86 @@ const {
 </div>
 
 <style define:vars={{ accent, accentDeep }}>
-  /* Quand la page est rendue par ConvertAPI (?export=pdf), on cache trigger + modal */
-  :global(html.pdf-export-mode) .pdf-trigger,
-  :global(html.pdf-export-mode) .pdf-modal {
+  /* Quand la page est rendue par ConvertAPI (?export=pdf), on cache trigger area + modal + repères */
+  :global(html.pdf-export-mode) .pdf-actions-floating,
+  :global(html.pdf-export-mode) .pdf-modal,
+  :global(html.pdf-export-mode .pdf-page-marker) {
     display: none !important;
+  }
+
+  /* Saut de page forcé sur une section (activé par ?break=<section> dans l'URL) */
+  :global(html.pdf-export-mode .pdf-force-break) {
+    break-before: page !important;
+    page-break-before: always !important;
+  }
+
+  /* Container des 2 boutons flottants */
+  .pdf-actions-floating {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 50;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px;
+  }
+
+  /* Bouton secondaire (Aperçu pages) : style outline */
+  .pdf-trigger-secondary {
+    background: #fff !important;
+    color: #061321 !important;
+    border-color: #061321 !important;
+    box-shadow: 4px 4px 0 0 var(--accentDeep) !important;
+  }
+  .pdf-trigger-secondary:hover {
+    box-shadow: 6px 6px 0 0 var(--accentDeep) !important;
+  }
+  .pdf-trigger-secondary[aria-pressed="true"] {
+    background: var(--accent) !important;
+    color: #fff !important;
+    border-color: var(--accentDeep) !important;
+  }
+
+  /* Labels du bouton preview : on/off swap selon l'état */
+  .pdf-preview-label-on { display: none; }
+  .pdf-trigger-secondary[aria-pressed="true"] .pdf-preview-label-off { display: none; }
+  .pdf-trigger-secondary[aria-pressed="true"] .pdf-preview-label-on { display: inline; }
+
+  /* Repère de saut de page (overlay absolute sur body en mode preview) */
+  :global(.pdf-page-marker) {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 0;
+    border-top: 2px dashed var(--accent);
+    z-index: 40;
+    pointer-events: none;
+  }
+  :global(.pdf-page-marker::after) {
+    content: attr(data-label);
+    position: absolute;
+    right: 24px;
+    top: -12px;
+    background: var(--accent);
+    color: #fff;
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    white-space: nowrap;
+  }
+  :global(.pdf-page-marker::before) {
+    content: "";
+    position: absolute;
+    left: 24px;
+    top: -8px;
+    width: 6px;
+    height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
   }
 
   .pdf-trigger {
@@ -569,15 +693,18 @@ const {
 
 <script define:vars={{ path, filename }}>
   const trigger = document.getElementById("pdf-export-trigger");
+  const previewToggle = document.getElementById("pdf-preview-toggle");
   const modal = document.getElementById("pdf-export-modal");
   const form = document.getElementById("pdf-export-form");
   const status = document.getElementById("pdf-status");
   const submitBtn = document.getElementById("pdf-submit");
   const pageSizeSelect = document.getElementById("pdf-pageSize");
   const customSize = document.getElementById("pdf-customSize");
+  const breakSelect = document.getElementById("pdf-breakSection");
 
   if (!trigger || !modal || !form) return;
 
+  // ===== Modal open/close =====
   function openModal() {
     modal.hidden = false;
     document.body.style.overflow = "hidden";
@@ -588,21 +715,104 @@ const {
     status.textContent = "";
     status.className = "pdf-status";
   }
-
   trigger.addEventListener("click", openModal);
-
   modal.querySelectorAll("[data-close]").forEach((el) => {
     el.addEventListener("click", closeModal);
   });
-
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape" && !modal.hidden) closeModal();
   });
-
   pageSizeSelect.addEventListener("change", () => {
     customSize.hidden = pageSizeSelect.value !== "custom";
   });
 
+  // ===== Page sizes catalog (mm) =====
+  const PAGE_SIZES_MM = {
+    a3: [297, 420],
+    a4: [210, 297],
+    a5: [148, 210],
+    letter: [216, 279],
+    legal: [216, 356],
+  };
+
+  // ===== Pagination preview =====
+  // Lit les params actuels du form et dessine des repères horizontaux sur le body
+  // aux positions où le PDF va couper. Calcul approximatif : on suppose que ConvertAPI
+  // rend la page web avec un viewport ≈ window.innerWidth, et scale tout pour rentrer
+  // dans la largeur du format. Le ratio hauteur/largeur du format détermine la hauteur
+  // de "1 page" en pixels frontend.
+  function getCurrentSettings() {
+    const fd = new FormData(form);
+    const pageSize = fd.get("pageSize") || "a4";
+    let [wMm, hMm] = PAGE_SIZES_MM[pageSize] || PAGE_SIZES_MM.a4;
+    if (pageSize === "custom") {
+      wMm = Number(fd.get("pageWidth")) || 210;
+      hMm = Number(fd.get("pageHeight")) || 297;
+    }
+    const orientation = fd.get("orientation") || "portrait";
+    if (orientation === "landscape") [wMm, hMm] = [hMm, wMm];
+    return {
+      pageWidthMm: wMm,
+      pageHeightMm: hMm,
+      marginTopMm: Number(fd.get("marginTop")) || 0,
+      marginBottomMm: Number(fd.get("marginBottom")) || 0,
+    };
+  }
+
+  function pageHeightPx() {
+    const s = getCurrentSettings();
+    const viewportPx = window.innerWidth;
+    // 1mm = 3.7795 px à 96 DPI. Le scale = largeur_format_px / viewport_px.
+    // Hauteur de page en frontend px = (hauteur_format_mm - marges) / scale_inv = (hMm - mT - mB) * (vpPx / wMm) / 3.7795 * 3.7795
+    // Simplifié : (hMm - mT - mB) * (vpPx / wMm)
+    const usableMm = Math.max(s.pageHeightMm - s.marginTopMm - s.marginBottomMm, 50);
+    return (usableMm / s.pageWidthMm) * viewportPx;
+  }
+
+  function clearMarkers() {
+    document.querySelectorAll(".pdf-page-marker").forEach((el) => el.remove());
+  }
+
+  function renderMarkers() {
+    clearMarkers();
+    const pH = pageHeightPx();
+    if (pH <= 0) return;
+    const totalH = document.documentElement.scrollHeight;
+    const numPages = Math.ceil(totalH / pH);
+    for (let i = 1; i < numPages; i++) {
+      const top = i * pH;
+      const marker = document.createElement("div");
+      marker.className = "pdf-page-marker";
+      marker.style.top = top + "px";
+      marker.dataset.label = "Saut page " + (i + 1);
+      document.body.appendChild(marker);
+    }
+  }
+
+  let previewOn = false;
+  function setPreview(on) {
+    previewOn = on;
+    previewToggle.setAttribute("aria-pressed", on ? "true" : "false");
+    if (on) renderMarkers();
+    else clearMarkers();
+  }
+
+  if (previewToggle) {
+    previewToggle.addEventListener("click", () => setPreview(!previewOn));
+  }
+
+  // Refresh markers when settings change (only if preview is on)
+  form.addEventListener("input", () => {
+    if (previewOn) renderMarkers();
+  });
+  form.addEventListener("change", () => {
+    if (previewOn) renderMarkers();
+  });
+  window.addEventListener("resize", () => {
+    if (previewOn) renderMarkers();
+  });
+
+  // ===== Submit =====
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
     const formData = new FormData(form);
@@ -620,6 +830,7 @@ const {
       },
       scale: Number(formData.get("scale")) || 100,
       pageRange: (formData.get("pageRange") || "").trim() || undefined,
+      breakSection: (formData.get("breakSection") || "").trim() || undefined,
     };
 
     if (payload.pageSize === "custom") {
