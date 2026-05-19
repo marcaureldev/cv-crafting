@@ -55,19 +55,6 @@ export const POST: APIRoute = async ({ request }) => {
   // (le composant PdfExportButton masque son trigger et sa modal sur ce flag)
   const targetUrl = `${origin}${body.path}?export=pdf`;
 
-  // Couleur du fond paper du design, étendue jusqu'aux marges du PDF (sinon Chrome met du blanc).
-  // background-color sur @page : non standard CSS Paged Media, mais supporté par Chromium / ConvertAPI.
-  const pageBg = "#fafaf8";
-  const injectedCss = `
-    html, body {
-      background-color: ${pageBg} !important;
-      print-color-adjust: exact !important;
-      -webkit-print-color-adjust: exact !important;
-    }
-    @page { background-color: ${pageBg}; }
-    .pdf-trigger, #pdf-export-modal { display: none !important; }
-  `;
-
   // ConvertAPI tourne sur leurs serveurs, donc l'URL doit être publique. localhost n'est pas joignable.
   if (/^https?:\/\/(localhost|127\.0\.0\.1|0\.0\.0\.0)/.test(targetUrl)) {
     return jsonError(
@@ -88,7 +75,6 @@ export const POST: APIRoute = async ({ request }) => {
     ConversionScale: body.scale,
     // Attendre que les fonts fontshare/googleapis et les icônes Iconify (Web Components) soient rendues.
     ConversionDelay: 2,
-    Css: injectedCss,
   };
   if (body.pageSize === "custom" && body.pageWidth && body.pageHeight) {
     params.PageWidth = body.pageWidth;
