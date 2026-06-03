@@ -26,7 +26,6 @@ const lastName = identity.fullName.replace(identity.firstName, "").trim();
 
     <style>
       @import url("https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@100,200,300,400,500,700,800,900&f[]=satoshi@300,400,500,700,900&display=swap");
-      @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
       :root {
         --ink: #061321;
         --ink-soft: rgba(6, 19, 33, 0.6);
@@ -36,7 +35,6 @@ const lastName = identity.fullName.replace(identity.firstName, "").trim();
         --caramel-deep: #8e6843;
         --font-display: "Cabinet Grotesk", ui-sans-serif, system-ui, sans-serif;
         --font-body: "Satoshi", ui-sans-serif, system-ui, sans-serif;
-        --font-playfair: "Playfair Display", serif;
       }
 
       body {
@@ -50,11 +48,11 @@ const lastName = identity.fullName.replace(identity.firstName, "").trim();
         color: #fff;
       }
 
+      .font-serif-d {
+        font-family: var(--font-display);
+      }
       .font-body {
         font-family: var(--font-body);
-      }
-      .font-playfair {
-        font-family: var(--font-playfair);
       }
       .text-ink { color: var(--ink); }
       .text-ink-soft { color: var(--ink-soft); }
@@ -130,43 +128,36 @@ const lastName = identity.fullName.replace(identity.firstName, "").trim();
               <iconify-icon icon="lucide:map-pin"></iconify-icon>
               <span>{identity.location}</span>
             </div>
-            <div class="flex items-center md:justify-end gap-2 text-caramel">
+            <!-- <div class="flex items-center md:justify-end gap-2 text-caramel">
               <iconify-icon icon="lucide:zap"></iconify-icon>
               <span>{identity.availability}</span>
-            </div>
+            </div> -->
           </div>
         </header>
 
         <section
           class="grid grid-cols-1 lg:grid-cols-12 divide-y lg:divide-y-0 lg:divide-x divide-ink-border border-b border-ink-border relative overflow-hidden"
         >
-          <div class="lg:col-span-7 p-6 md:p-12 lg:p-16 flex flex-col justify-center relative z-10">
+          <div class="lg:col-span-6 p-6 md:p-12 flex flex-col justify-center relative z-10">
             <div
-              class="font-bold text-caramel text-2xl border border-caramel-deep bg-white px-3 py-1.5 inline-block uppercase tracking-widest"
+              class="font-bold text-caramel text-2xl px-3 py-1.5 inline-block capitalize tracking-widest"
             >
             {identity.firstName} {lastName}
             </div>
             <h2
-              class="text-6xl leading-24 tracking-tight font-bold! uppercase text-ink mt-12 font-playfair"
+              class="text-3xl leading-8 tracking-tight font-medium capitalize text-ink mt-4"
             >
-              Vue &amp; Nuxt <br />
-              <span class="text-caramel font-light font-playfair lowercase">frontend</span>
-              <br />
-              Developer
+            {headline.tagline}
             </h2>
 
             <div class="mt-6 max-w-2xl">
-              <p class="text-xl md:text-2xl text-ink leading-snug mb-4">
-                I craft fast, modern, <span class="text-caramel">pixel-perfect</span> interfaces.
-              </p>
-              <p class="font-mono text-sm text-ink-soft uppercase tracking-widest">
-                Vue 3 &middot; Nuxt &middot; Pinia &middot; Tailwind &middot; TypeScript <br />
-                Figma to code, performance first.
+              <p class="text-base text-ink leading-snug mb-4">
+                {headline.sub}
               </p>
             </div>
           </div>
 
-          <div class="lg:col-span-5 p-6 md:p-12 flex flex-col justify-center bg-white relative z-10">
+          <div class="lg:col-span-6 p-6 md:p-12 flex flex-col justify-center bg-white relative z-10">
             <div class="border-l-4 border-caramel-deep pl-6 flex flex-col gap-4">
               {about.map((p) => (
                 <p class="text-lg leading-relaxed text-ink/90">{p}</p>
@@ -179,7 +170,7 @@ const lastName = identity.fullName.replace(identity.firstName, "").trim();
         <!-- EXPERIENCE -->
         <section data-pdf-break="experience" class="border-b border-ink-border">
           <div class="p-4 md:p-6 border-b border-ink-border bg-white">
-            <h3 class="font-mono text-xl md:text-2xl uppercase tracking-widest text-caramel flex items-center gap-3">
+            <h3 class="text-xl font-medium uppercase tracking-widest text-caramel flex items-center gap-3">
               <iconify-icon icon="lucide:briefcase"></iconify-icon>
               Experience
             </h3>
@@ -279,7 +270,7 @@ const lastName = identity.fullName.replace(identity.firstName, "").trim();
             <div class="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-ink-border h-full">
               <div class="flex flex-col divide-y divide-ink-border md:border-r md:border-ink-border">
                 {skills.slice(0, 2).map((cat, idx) => (
-                  <div class="p-6 md:p-8 flex-1">
+                  <div class="p-6 flex-1">
                     <h5 class="font-serif-d text-2xl text-ink mb-6">{cat.label}</h5>
                     <ul class="font-mono text-sm text-ink-soft space-y-3">
                       {cat.items.map((s) => (
@@ -314,7 +305,7 @@ const lastName = identity.fullName.replace(identity.firstName, "").trim();
         <!-- EDUCATION + AWARDS -->
         <section
           data-pdf-break="education"
-          class="grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-ink-border border-b border-ink-border"
+          class="divide-y divide-ink-border border-b border-ink-border"
         >
           <!-- EDUCATION -->
           <div class="flex flex-col">
@@ -324,7 +315,7 @@ const lastName = identity.fullName.replace(identity.firstName, "").trim();
                 Éducation
               </h3>
             </div>
-            <div class="flex flex-col divide-y divide-ink-border">
+            <div class="grid grid-cols-1 md:grid-cols-2 divide-x divide-ink-border">
               {education.map((e) => (
                 <div class="p-6 md:p-8 hover:bg-white transition-colors">
                   <div class="font-mono text-sm text-caramel mb-2">{e.period}</div>
@@ -345,7 +336,7 @@ const lastName = identity.fullName.replace(identity.firstName, "").trim();
         >
           <a
             href={`mailto:${identity.email}`}
-            class="contact-tile p-6 flex flex-col items-center justify-center gap-2 cursor-pointer text-center"
+            class="contact-tile p-4 flex flex-col items-center justify-center gap-2 cursor-pointer text-center"
           >
             <iconify-icon icon="lucide:mail" class="contact-icon text-3xl text-caramel"></iconify-icon>
             <span class="contact-label font-mono text-xs uppercase tracking-widest text-ink">Email</span>
@@ -365,7 +356,7 @@ const lastName = identity.fullName.replace(identity.firstName, "").trim();
             href={identity.linkedinUrl}
             target="_blank"
             rel="noopener"
-            class="contact-tile linkedin p-6 flex flex-col items-center justify-center gap-2 cursor-pointer text-center"
+            class="contact-tile linkedin p-4 flex flex-col items-center justify-center gap-2 cursor-pointer text-center"
           >
             <iconify-icon icon="lucide:linkedin" class="contact-icon text-3xl text-caramel"></iconify-icon>
             <span class="contact-label font-mono text-xs uppercase tracking-widest text-ink">LinkedIn</span>
@@ -375,7 +366,7 @@ const lastName = identity.fullName.replace(identity.firstName, "").trim();
             href={identity.wakatimeUrl}
             target="_blank"
             rel="noopener"
-            class="contact-tile p-6 flex flex-col items-center justify-center gap-2 cursor-pointer text-center"
+            class="contact-tile p-4 flex flex-col items-center justify-center gap-2 cursor-pointer text-center"
           >
             <iconify-icon icon="lucide:clock" class="contact-icon text-3xl text-caramel"></iconify-icon>
             <span class="contact-label font-mono text-xs uppercase tracking-widest text-ink">WakaTime</span>
@@ -383,7 +374,7 @@ const lastName = identity.fullName.replace(identity.firstName, "").trim();
           </a>
           <a
             href={`tel:${identity.phone.replace(/\s/g, "")}`}
-            class="contact-tile p-6 flex flex-col items-center justify-center gap-2 cursor-pointer text-center"
+            class="contact-tile p-4 flex flex-col items-center justify-center gap-2 cursor-pointer text-center"
           >
             <iconify-icon icon="lucide:phone" class="contact-icon text-3xl text-caramel"></iconify-icon>
             <span class="contact-label font-mono text-xs uppercase tracking-widest text-ink">Phone</span>

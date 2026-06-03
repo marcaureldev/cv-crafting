@@ -322,7 +322,7 @@ const {
     left: 0;
     right: 0;
     height: 0;
-    border-top: 2px dashed var(--accent);
+    border-top: 2px dashed var(--pdf-accent, #aa7f56);
     z-index: 40;
     pointer-events: none;
   }
@@ -331,7 +331,7 @@ const {
     position: absolute;
     right: 24px;
     top: -12px;
-    background: var(--accent);
+    background: var(--pdf-accent, #aa7f56);
     color: #fff;
     font-family: "JetBrains Mono", ui-monospace, monospace;
     font-size: 10px;
@@ -348,15 +348,11 @@ const {
     top: -8px;
     width: 6px;
     height: 6px;
-    background: var(--accent);
+    background: var(--pdf-accent, #aa7f56);
     border-radius: 50%;
   }
 
   .pdf-trigger {
-    position: fixed;
-    bottom: 24px;
-    right: 24px;
-    z-index: 50;
     display: flex;
     align-items: center;
     gap: 8px;
@@ -691,7 +687,13 @@ const {
   }
 </style>
 
-<script define:vars={{ path, filename }}>
+<script define:vars={{ path, filename, accent, accentDeep }}>
+  // Expose accent/accentDeep en CSS vars globales : les markers de pagination sont
+  // créés dynamiquement et appendés à document.body (hors du scope du composant Astro),
+  // donc `var(--accent)` ne les atteint pas via inheritance. On les republie sur <html>.
+  document.documentElement.style.setProperty("--pdf-accent", accent);
+  document.documentElement.style.setProperty("--pdf-accent-deep", accentDeep);
+
   const trigger = document.getElementById("pdf-export-trigger");
   const previewToggle = document.getElementById("pdf-preview-toggle");
   const modal = document.getElementById("pdf-export-modal");
