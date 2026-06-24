@@ -81,7 +81,6 @@ const skillIcon: Record<string, string> = {
 
       body {
         font-family: var(--font-body);
-        background: var(--shell);
         color: var(--ink);
       }
       body::selection,
@@ -184,13 +183,27 @@ const skillIcon: Record<string, string> = {
       .row-hover:hover { background: #faf8f5; }
       .row-hover:hover .row-title { color: var(--caramel-deep); }
       .row-title { transition: color 0.18s ease; }
+
+      /* ─── Mode export PDF (ConvertAPI, ?export=pdf) ───
+         On retire l'habillage "écran" (fond gris, marges, coin arrondi,
+         ombre, largeur max) pour que la feuille remplisse la page :
+         le bas non utilisé devient une marge blanche normale, plus le
+         vide gris disgracieux à l'impression. */
+      html.pdf-export-mode body { background: #fff; }
+      html.pdf-export-mode .cv-shell { padding: 0; min-height: 0; display: block; }
+      html.pdf-export-mode .cv-sheet {
+        max-width: none;
+        border: none;
+        border-radius: 0;
+        box-shadow: none;
+      }
     </style>
   </head>
 
   <body>
-    <div class="min-h-screen w-full flex justify-center p-6">
+    <div class="cv-shell min-h-screen w-full flex justify-center p-6">
       <main
-        class="w-full max-w-[880px] bg-paper border border-ink-border rounded-2xl overflow-hidden shadow-[0_24px_60px_-30px_rgba(6,19,33,0.45)]"
+        class="cv-sheet w-full max-w-[880px] bg-paper border border-ink-border overflow-hidden"
       >
         <!-- ════════ HEADER BAND ════════ -->
         <header class="flex items-stretch gap-5 p-6 border-b border-ink-border">
