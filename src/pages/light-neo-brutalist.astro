@@ -8,7 +8,48 @@ import { getCV } from "../content";
 const cv = getCV("vue");
 const { identity, headline, about, experiences, projects, skills, education } = cv;
 const pageTitle = `${identity.fullName} - ${headline.title}`;
+
 const lastName = identity.fullName.replace(identity.firstName, "").trim();
+const displayFirst = identity.firstName.split(" ")[0];
+const monogram = (displayFirst[0] + lastName[0]).toUpperCase();
+
+// Langues : standard pour le profil, à ajuster si besoin.
+const languages = [
+  { name: "Français", level: "Natif" },
+  { name: "Anglais", level: "Technique" },
+];
+
+// Centres d'intérêt.
+const hobbies = [
+  { name: "Musiques", icon: "lucide:music" },
+  { name: "Animés", icon: "lucide:tv" },
+  { name: "Coder", icon: "lucide:code-xml" },
+];
+
+// Toutes les compétences à plat (grille de pastilles, comme la référence).
+const allSkills = skills.flatMap((c) => c.items);
+
+// Icône de marque par compétence (fallback : puce caramel).
+const skillIcon: Record<string, string> = {
+  "Vue 3": "logos:vue",
+  "Nuxt 3": "logos:nuxt-icon",
+  "Pinia": "logos:pinia",
+  "Vue Router": "logos:vue",
+  "TypeScript": "logos:typescript-icon",
+  "JavaScript": "logos:javascript",
+  "Tailwind CSS": "logos:tailwindcss-icon",
+  "Figma": "logos:figma",
+  "Vite": "logos:vitejs",
+  "Git / GitHub / GitLab": "logos:git-icon",
+  "Vercel": "logos:vercel-icon",
+  "Firebase": "logos:firebase-icon",
+  "WebSocket": "lucide:radio-tower",
+  "Astro": "logos:astro-icon",
+  "API REST": "lucide:webhook",
+  "Axios": "lucide:arrow-left-right",
+  "JWT auth": "logos:jwt-icon",
+  "Supabase": "logos:supabase-icon",
+};
 ---
 
 <html lang="fr" class="scroll-smooth">
@@ -18,7 +59,7 @@ const lastName = identity.fullName.replace(identity.firstName, "").trim();
     <title>{pageTitle}</title>
     <meta name="description" content={headline.tagline} />
 
-    <!-- Iconify (lucide icon set) -->
+    <!-- Iconify (lucide + logos icon sets) -->
     <script
       is:inline
       src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"
@@ -29,8 +70,9 @@ const lastName = identity.fullName.replace(identity.firstName, "").trim();
       :root {
         --ink: #061321;
         --ink-soft: rgba(6, 19, 33, 0.6);
-        --ink-border: rgba(6, 19, 33, 0.15);
-        --paper: #fafaf8;
+        --ink-border: rgba(6, 19, 33, 0.14);
+        --paper: #ffffff;
+        --shell: #ecebe7;
         --caramel: #aa7f56;
         --caramel-deep: #8e6843;
         --font-display: "Cabinet Grotesk", ui-sans-serif, system-ui, sans-serif;
@@ -39,7 +81,7 @@ const lastName = identity.fullName.replace(identity.firstName, "").trim();
 
       body {
         font-family: var(--font-body);
-        background: var(--paper);
+        background: var(--shell);
         color: var(--ink);
       }
       body::selection,
@@ -48,12 +90,8 @@ const lastName = identity.fullName.replace(identity.firstName, "").trim();
         color: #fff;
       }
 
-      .font-serif-d {
-        font-family: var(--font-display);
-      }
-      .font-body {
-        font-family: var(--font-body);
-      }
+      .font-serif-d { font-family: var(--font-display); }
+      .font-body { font-family: var(--font-body); }
       .text-ink { color: var(--ink); }
       .text-ink-soft { color: var(--ink-soft); }
       .text-caramel { color: var(--caramel); }
@@ -61,326 +99,295 @@ const lastName = identity.fullName.replace(identity.firstName, "").trim();
       .bg-paper { background: var(--paper); }
       .bg-ink { background: var(--ink); }
       .bg-caramel { background: var(--caramel); }
-      .bg-caramel-deep { background: var(--caramel-deep); }
-      .border-ink { border-color: var(--ink); }
       .border-ink-border { border-color: var(--ink-border); }
       .border-caramel-deep { border-color: var(--caramel-deep); }
       .divide-ink-border > * + * { border-color: var(--ink-border); }
 
-      .bg-dot-pattern {
-        background-image: radial-gradient(rgba(6, 19, 33, 0.1) 10%, transparent 11%);
-        background-size: 32px 32px;
+      /* Titre de section */
+      .sec-title {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-family: var(--font-body);
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--caramel-deep);
+      }
+      .sec-title iconify-icon { font-size: 16px; color: var(--caramel); }
+
+      /* Pastille de contact / lien social */
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        border: 1px solid var(--ink-border);
+        border-radius: 8px;
+        padding: 0.34rem 0.62rem;
+        font-family: ui-monospace, "SFMono-Regular", monospace;
+        font-size: 12.5px;
+        line-height: 1.1;
+        color: var(--ink-soft);
+        transition: border-color 0.15s ease, color 0.15s ease, background-color 0.15s ease;
+      }
+      .pill:hover { border-color: var(--caramel-deep); color: var(--ink); }
+      .pill iconify-icon { font-size: 15px; flex-shrink: 0; }
+
+      /* Tag (stack, langue) */
+      .tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        border: 1px solid var(--ink-border);
+        border-radius: 7px;
+        padding: 0.28rem 0.58rem;
+        font-family: ui-monospace, "SFMono-Regular", monospace;
+        font-size: 11.5px;
+        line-height: 1.1;
+        color: var(--ink-soft);
+        background: #fff;
+        transition: border-color 0.15s ease, color 0.15s ease;
+      }
+      .tag:hover { border-color: var(--caramel-deep); color: var(--ink); }
+      .tag iconify-icon { font-size: 18px; }
+
+      /* Badge mono (période, année, LIVE) */
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        font-family: ui-monospace, "SFMono-Regular", monospace;
+        font-size: 11px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        border: 1px solid var(--ink-border);
+        padding: 0.2rem 0.52rem;
+        color: var(--ink-soft);
+        white-space: nowrap;
+      }
+      .badge-live {
+        border-color: var(--caramel-deep);
+        color: var(--caramel-deep);
+        font-weight: 700;
+      }
+      .badge-live::before {
+        content: "";
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: var(--caramel);
       }
 
-      /* Custom scrollbar */
-      ::-webkit-scrollbar { width: 12px; background: var(--paper); border-left: 1px solid var(--ink-border); }
-      ::-webkit-scrollbar-thumb { background: var(--ink-border); }
-      ::-webkit-scrollbar-thumb:hover { background: var(--caramel); }
-
-      /* Stat hover */
-      .stat-cell { transition: background-color 300ms ease, color 300ms ease; }
-      .stat-cell:hover { background: var(--caramel); }
-      .stat-cell:hover .stat-value { color: var(--ink); }
-      .stat-cell:hover .stat-label { color: rgba(6, 19, 33, 0.8); }
-
-      /* Experience row */
-      .exp-row { transition: background-color 200ms ease; }
-      .exp-row:hover { background: #fff; }
-      .exp-row:hover .exp-role { color: var(--caramel); }
-      .exp-role { transition: color 200ms ease; }
-
-      /* Project card */
-      .proj-card { transition: background-color 200ms ease; }
-      .proj-card:hover { background: #fff; }
-      .proj-card:hover .proj-title { color: var(--caramel); }
-      .proj-title { transition: color 200ms ease; }
-      .icon-btn { transition: background-color 200ms ease, color 200ms ease, border-color 200ms ease; }
-      .icon-btn:hover { background: var(--caramel); color: var(--ink); border-color: var(--caramel-deep); }
-      .icon-btn-dark { background: var(--ink); color: var(--paper); border-color: var(--caramel-deep); }
-      .icon-btn-dark:hover { background: var(--caramel); color: var(--ink); }
-
-      /* Skill bullet */
-      .skill-item { transition: color 200ms ease; }
-      .skill-item:hover { color: var(--caramel); }
-
-      /* Footer contact tile */
-      .contact-tile { transition: background-color 200ms ease, color 200ms ease; }
-      .contact-tile:hover { background: var(--ink); color: var(--paper); }
-      .contact-tile:hover .contact-icon,
-      .contact-tile:hover .contact-label,
-      .contact-tile:hover .contact-id { color: var(--paper); }
-      .contact-tile.linkedin:hover { background: #0077b5; }
-
+      /* Carte projet / ligne exp : léger hover */
+      .row-hover { transition: background-color 0.18s ease; }
+      .row-hover:hover { background: #faf8f5; }
+      .row-hover:hover .row-title { color: var(--caramel-deep); }
+      .row-title { transition: color 0.18s ease; }
     </style>
   </head>
 
   <body>
-    <div class="min-h-screen bg-paper text-ink">
-      <main class="max-w-[1440px] mx-auto border-x border-ink-border flex flex-col">
-        <header
-          class="flex flex-col md:flex-row justify-between items-start md:items-center p-4 md:p-6 border-b border-ink-border font-mono text-sm tracking-widest gap-4"
-        >
-          <div class="flex flex-col gap-2 items-start">
-            <span class="text-caramel">@{identity.handle}</span>
+    <div class="min-h-screen w-full flex justify-center p-6">
+      <main
+        class="w-full max-w-[880px] bg-paper border border-ink-border rounded-2xl overflow-hidden shadow-[0_24px_60px_-30px_rgba(6,19,33,0.45)]"
+      >
+        <!-- ════════ HEADER BAND ════════ -->
+        <header class="flex items-stretch gap-5 p-6 border-b border-ink-border">
+          <div
+            class="w-24 h-24 md:w-28 md:h-28 shrink-0 rounded-xl bg-ink text-paper flex items-center justify-center relative overflow-hidden"
+          >
+            <span class="font-serif-d text-5xl font-bold tracking-tight">{monogram}</span>
+            <span class="absolute bottom-1.5 right-2 font-mono text-[8px] tracking-[0.3em] text-caramel uppercase">dev</span>
+            <img
+              src="/profile.jpg"
+              alt={identity.fullName}
+              class="absolute inset-0 w-full h-full object-cover"
+              onerror="this.style.display='none'"
+            />
           </div>
-          <div class="flex flex-col md:text-right gap-1 text-ink-soft">
-            <div class="flex items-center md:justify-end gap-2">
-              <iconify-icon icon="lucide:map-pin"></iconify-icon>
-              <span>{identity.location}</span>
+
+          <!-- Name + title + social -->
+          <div class="flex-1 min-w-0 flex flex-col justify-center">
+            <h1 class="font-serif-d text-3xl md:text-4xl leading-[0.95] tracking-tight">
+              <span class="font-bold text-ink">{displayFirst}</span>
+              <span class="text-ink-soft font-medium">{lastName}</span>
+            </h1>
+            <p class="mt-2 font-mono text-[15px] md:text-[16px] font-bold uppercase tracking-[0.18em] text-caramel-deep">
+              {headline.title}
+            </p>
+            <div class="mt-3 flex flex-wrap gap-1.5">
+              <a class="pill" href={identity.githubUrl} target="_blank" rel="noopener">
+                <iconify-icon icon="lucide:github"></iconify-icon>{identity.github}
+              </a>
+              <a class="pill" href={identity.linkedinUrl} target="_blank" rel="noopener">
+                <iconify-icon icon="lucide:linkedin"></iconify-icon>linkedin.com/in/marc-aurel
+              </a>
+              <a class="pill" href={identity.wakatimeUrl} target="_blank" rel="noopener">
+                <iconify-icon icon="lucide:clock"></iconify-icon>{identity.wakatime}
+              </a>
             </div>
-            <!-- <div class="flex items-center md:justify-end gap-2 text-caramel">
-              <iconify-icon icon="lucide:zap"></iconify-icon>
-              <span>{identity.availability}</span>
-            </div> -->
+          </div>
+
+          <!-- Logo monogram -->
+          <div
+            class="shrink-0 self-start w-11 h-11 rounded-full border border-ink-border flex items-center justify-center"
+          >
+            <span class="font-serif-d text-sm font-bold text-ink">{monogram}</span>
           </div>
         </header>
 
-        <section
-          class="grid grid-cols-1 lg:grid-cols-12 divide-y lg:divide-y-0 lg:divide-x divide-ink-border border-b border-ink-border relative overflow-hidden"
-        >
-          <div class="lg:col-span-6 p-6 md:p-12 flex flex-col justify-center relative z-10">
-            <div
-              class="font-bold text-caramel text-2xl px-3 py-1.5 inline-block capitalize tracking-widest"
-            >
-            {identity.firstName} {lastName}
-            </div>
-            <h2
-              class="text-3xl leading-8 tracking-tight font-medium capitalize text-ink mt-4"
-            >
-            {headline.tagline}
-            </h2>
-
-            <div class="mt-6 max-w-2xl">
-              <p class="text-base text-ink leading-snug mb-4">
-                {headline.sub}
+        <div class="grid grid-cols-1 md:grid-cols-12">
+          <aside
+            class="md:col-span-4 p-5 flex flex-col gap-7 border-b md:border-b-0 md:border-r border-ink-border"
+          >
+            <!-- Profil -->
+            <section>
+              <h3 class="sec-title">
+                <iconify-icon icon="lucide:user"></iconify-icon>Profil
+              </h3>
+              <p class="mt-3 text-[14px] leading-relaxed text-ink-soft text-justify">
+                {about.slice(0, 2).join(" ")}
               </p>
-            </div>
-          </div>
+            </section>
 
-          <div class="lg:col-span-6 p-6 md:p-12 flex flex-col justify-center bg-white relative z-10">
-            <div class="border-l-4 border-caramel-deep pl-6 flex flex-col gap-4">
-              {about.map((p) => (
-                <p class="text-lg leading-relaxed text-ink/90">{p}</p>
-              ))}
-            </div>
-          </div>
-        </section>
-
-
-        <!-- EXPERIENCE -->
-        <section data-pdf-break="experience" class="border-b border-ink-border">
-          <div class="p-4 md:p-6 border-b border-ink-border bg-white">
-            <h3 class="text-xl font-medium uppercase tracking-widest text-caramel flex items-center gap-3">
-              <iconify-icon icon="lucide:briefcase"></iconify-icon>
-              Experience
-            </h3>
-          </div>
-          <div class="flex flex-col divide-y divide-ink-border">
-            {experiences.map((j) => (
-              <div class="exp-row grid grid-cols-1 md:grid-cols-12 group">
-                <div class="md:col-span-3 p-6 md:p-8 border-b md:border-b-0 md:border-r border-ink-border">
-                  <span class="font-mono text-sm text-caramel uppercase tracking-wider block mb-2">{j.period}</span>
-                  <span class="font-mono text-xs text-ink-soft uppercase block">{j.location}</span>
-                </div>
-                <div class="md:col-span-9 p-6 md:p-8">
-                  <div class="flex flex-col md:flex-row md:items-baseline justify-between mb-4 gap-2">
-                    <h4 class="exp-role font-serif-d text-3xl md:text-4xl text-ink">{j.role}</h4>
-                    <span class="font-mono text-lg text-ink">@ {j.company}</span>
-                  </div>
-                  <p class="text-ink-soft text-lg mb-6 max-w-3xl leading-relaxed">
-                    {j.summary.vue}
-                  </p>
-                  <ul class="font-mono text-sm text-ink/80 space-y-2 max-w-2xl">
-                    {j.highlights.vue.map((h) => (
-                      <li class="flex items-start gap-3">
-                        <iconify-icon icon="lucide:arrow-right" class="text-caramel mt-0.5 shrink-0"></iconify-icon>
-                        <span>{h}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <!-- PROJECTS + SKILLS -->
-        <section
-          data-pdf-break="projects"
-          class="grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-ink-border border-b border-ink-border"
-        >
-          <!-- PROJECTS -->
-          <div class="flex flex-col">
-            <div class="p-4 md:p-6 border-b border-ink-border bg-white">
-              <h3 class="font-mono text-xl md:text-2xl uppercase tracking-widest text-caramel flex items-center gap-3">
-                <iconify-icon icon="lucide:folder-code"></iconify-icon>
-                Selected Works
+            <!-- Contact -->
+            <section>
+              <h3 class="sec-title">
+                <iconify-icon icon="lucide:contact"></iconify-icon>Contact
               </h3>
-            </div>
-            <div class="flex flex-col divide-y divide-ink-border">
-              {projects.map((p) => (
-                <article class="proj-card p-6 md:p-8 group">
-                  <div class="flex justify-between items-start mb-3 gap-4">
-                    <h4 class="proj-title font-serif-d text-3xl text-ink">{p.name}</h4>
-                    <div class="flex gap-2 shrink-0">
-                      {p.link && (
-                        <a
-                          href={`https://${p.link}`}
-                          target="_blank"
-                          rel="noopener"
-                          class="icon-btn border border-ink-border p-2 bg-white"
-                          aria-label={`Code source de ${p.name}`}
-                        >
-                          <iconify-icon icon="lucide:github" class="text-xl"></iconify-icon>
-                        </a>
-                      )}
-                      {p.live && (
-                        <a
-                          href={`https://${p.live}`}
-                          target="_blank"
-                          rel="noopener"
-                          class="icon-btn icon-btn-dark p-2"
-                          aria-label={`Voir ${p.name} en ligne`}
-                        >
-                          <iconify-icon icon="lucide:play" class="text-xl"></iconify-icon>
-                        </a>
-                      )}
+              <div class="mt-3 flex flex-col gap-2">
+                <a class="pill justify-start!" href={`tel:${identity.phone.replace(/\s/g, "")}`}>
+                  <iconify-icon icon="lucide:phone" class="text-caramel"></iconify-icon>{identity.phone}
+                </a>
+                <a class="pill justify-start!" href={`mailto:${identity.email}`}>
+                  <iconify-icon icon="lucide:mail" class="text-caramel"></iconify-icon>
+                  <span class="truncate">{identity.email}</span>
+                </a>
+                <span class="pill justify-start!">
+                  <iconify-icon icon="lucide:map-pin" class="text-caramel"></iconify-icon>{identity.location}
+                </span>
+              </div>
+            </section>
+
+            <!-- Formation -->
+            <section>
+              <h3 class="sec-title">
+                <iconify-icon icon="lucide:graduation-cap"></iconify-icon>Formation
+              </h3>
+              <div class="mt-3 flex flex-col gap-4">
+                {education.map((e) => (
+                  <div>
+                    <span class="badge mb-1">{e.period}</span>
+                    <h4 class="mt-1.5 font-serif-d text-[16px] leading-tight text-ink">{e.title}</h4>
+                    <p class="text-[13px] text-caramel-deep mt-0.5">{e.field}</p>
+                    <p class="text-[12.5px] text-ink-soft leading-snug">{e.school}</p>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            <!-- Langues -->
+            <section>
+              <h3 class="sec-title">
+                <iconify-icon icon="lucide:languages"></iconify-icon>Langues
+              </h3>
+              <div class="mt-3 flex flex-wrap gap-2">
+                {languages.map((l) => (
+                  <span class="tag">
+                    <span class="font-semibold text-ink">{l.name}</span>
+                    <span class="text-caramel-deep">{l.level}</span>
+                  </span>
+                ))}
+              </div>
+            </section>
+
+            <!-- Hobbies -->
+            <section>
+              <h3 class="sec-title">
+                <iconify-icon icon="lucide:heart"></iconify-icon>Hobbies
+              </h3>
+              <div class="mt-3 flex flex-wrap gap-2">
+                {hobbies.map((h) => (
+                  <span class="tag">
+                    <iconify-icon icon={h.icon} class="text-caramel"></iconify-icon>
+                    <span class="font-semibold text-ink">{h.name}</span>
+                  </span>
+                ))}
+              </div>
+            </section>
+          </aside>
+
+          <!-- ─── MAIN ─── -->
+          <div class="md:col-span-8 flex flex-col">
+            <!-- Projets -->
+            <section data-pdf-break="projects" class="border-b border-ink-border">
+              <h3 class="sec-title p-4">
+                <iconify-icon icon="lucide:folder-code"></iconify-icon>Projets
+              </h3>
+              <div class="mt-4 flex flex-col">
+                {projects.map((p) => (
+                  <article class="row-hover p-4 first:pt-0 border-b border-ink-border last:border-b-0">
+                    <div class="flex items-start justify-between gap-3">
+                      <h4 class="row-title font-serif-d text-lg leading-tight text-ink">{p.name}</h4>
+                      <div class="flex items-center gap-1.5 shrink-0">
+                        {p.live && (
+                          <a class="badge badge-live" href={`https://${p.live}`} target="_blank" rel="noopener">Live</a>
+                        )}
+                        {p.link && (
+                          <a class="badge" href={`https://${p.link}`} target="_blank" rel="noopener">
+                            <iconify-icon icon="lucide:github"></iconify-icon>Code
+                          </a>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                  <p class="font-mono text-sm text-caramel mb-4">{p.tagline}</p>
-                  <p class="text-ink-soft mb-6">{p.description}</p>
-                  <div class="flex flex-wrap gap-2 font-mono text-xs uppercase tracking-wider">
-                    {p.stack.map((s) => (
-                      <span class="border border-ink-border bg-white text-ink-soft px-2 py-1">{s}</span>
-                    ))}
-                  </div>
-                </article>
-              ))}
-            </div>
-          </div>
-
-          <!-- SKILLS MATRIX -->
-          <div class="flex flex-col">
-            <div class="p-4 md:p-6 border-b border-ink-border bg-white">
-              <h3 class="font-mono text-xl md:text-2xl uppercase tracking-widest text-caramel flex items-center gap-3">
-                <iconify-icon icon="lucide:cpu"></iconify-icon>
-                Skills Matrix
-              </h3>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-ink-border h-full">
-              <div class="flex flex-col divide-y divide-ink-border md:border-r md:border-ink-border">
-                {skills.slice(0, 2).map((cat, idx) => (
-                  <div class="p-6 flex-1">
-                    <h5 class="font-serif-d text-2xl text-ink mb-6">{cat.label}</h5>
-                    <ul class="font-mono text-sm text-ink-soft space-y-3">
-                      {cat.items.map((s) => (
-                        <li class="skill-item flex items-center gap-2">
-                          <span class={`w-1.5 h-1.5 ${idx === 0 ? "bg-caramel" : "bg-[rgba(6,19,33,0.15)]"}`}></span>
-                          {s}
-                        </li>
+                    <p class="mt-0.5 font-mono text-[12px] text-caramel-deep uppercase tracking-wide">{p.tagline}</p>
+                    <p class="mt-1.5 text-[13.5px] leading-relaxed text-ink-soft">{p.description}</p>
+                    <div class="mt-2 flex flex-wrap gap-1.5">
+                      {p.stack.map((s) => (
+                        <span class="tag !text-[11.5px]">{s}</span>
                       ))}
-                    </ul>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </section>
+
+            <!-- Expérience -->
+            <section data-pdf-break="experience" class="border-b border-ink-border">
+              <h3 class="sec-title p-4">
+                <iconify-icon icon="lucide:briefcase"></iconify-icon>Expérience
+              </h3>
+              <div class="mt-4 flex flex-col">
+                {experiences.map((j) => (
+                  <div class="row-hover p-4 first:pt-0 border-b border-ink-border last:border-b-0">
+                    <div class="flex items-baseline justify-between gap-3">
+                      <span class="font-mono text-[14px] font-semibold text-ink leading-tight">{j.company}</span>
+                      <span class="badge shrink-0">{j.period}</span>
+                    </div>
+                    <h4 class="row-title font-serif-d text-[16px] leading-tight text-ink mt-1.5">{j.role}</h4>
+                    <p class="mt-1 text-[13.5px] leading-relaxed text-ink-soft">{j.summary.vue}</p>
                   </div>
                 ))}
               </div>
-              <div class="flex flex-col divide-y divide-ink-border">
-                {skills.slice(2, 4).map((cat) => (
-                  <div class="p-6 md:p-8 flex-1">
-                    <h5 class="font-serif-d text-2xl text-ink mb-6">{cat.label}</h5>
-                    <ul class="font-mono text-sm text-ink-soft space-y-3">
-                      {cat.items.map((s) => (
-                        <li class="skill-item flex items-center gap-2">
-                          <span class="w-1.5 h-1.5 bg-[rgba(6,19,33,0.15)]"></span>
-                          {s}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
+            </section>
+
+            <!-- Compétences -->
+            <section class="p-4">
+              <h3 class="sec-title">
+                <iconify-icon icon="lucide:cpu"></iconify-icon>Compétences
+              </h3>
+              <div class="mt-4 flex flex-wrap gap-1.5">
+                {allSkills.map((s) => (
+                  <span class="tag">
+                    <iconify-icon icon={skillIcon[s] ?? "lucide:dot"} class={skillIcon[s] ? "" : "text-caramel"}></iconify-icon>
+                    {s}
+                  </span>
                 ))}
               </div>
-            </div>
+            </section>
           </div>
-        </section>
-
-        <!-- EDUCATION + AWARDS -->
-        <section
-          data-pdf-break="education"
-          class="divide-y divide-ink-border border-b border-ink-border"
-        >
-          <!-- EDUCATION -->
-          <div class="flex flex-col">
-            <div class="p-4 md:p-6 border-b border-ink-border bg-white">
-              <h3 class="font-mono text-xl uppercase tracking-widest text-ink flex items-center gap-3">
-                <iconify-icon icon="lucide:graduation-cap"></iconify-icon>
-                Éducation
-              </h3>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 divide-x divide-ink-border">
-              {education.map((e) => (
-                <div class="p-6 md:p-8 hover:bg-white transition-colors">
-                  <div class="font-mono text-sm text-caramel mb-2">{e.period}</div>
-                  <h4 class="font-serif-d text-2xl text-ink mb-1">{e.title}</h4>
-                  <p class="font-mono text-sm text-ink/80 mb-4">{e.field} &mdash; {e.school}</p>
-                  <p class="text-ink-soft text-sm leading-relaxed">{e.detail}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-        </section>
-
-        <!-- FOOTER CONTACT MATRIX -->
-        <footer
-          data-pdf-break="footer"
-          class="grid grid-cols-2 md:grid-cols-5 divide-y md:divide-y-0 divide-x divide-ink-border bg-white md:bg-transparent border-b border-ink-border"
-        >
-          <a
-            href={`mailto:${identity.email}`}
-            class="contact-tile p-4 flex flex-col items-center justify-center gap-2 cursor-pointer text-center"
-          >
-            <iconify-icon icon="lucide:mail" class="contact-icon text-3xl text-caramel"></iconify-icon>
-            <span class="contact-label font-mono text-xs uppercase tracking-widest text-ink">Email</span>
-            <span class="contact-id font-mono text-[11px] text-ink-soft break-all">{identity.email}</span>
-          </a>
-          <a
-            href={identity.githubUrl}
-            target="_blank"
-            rel="noopener"
-            class="contact-tile p-6 flex flex-col items-center justify-center gap-2 cursor-pointer text-center"
-          >
-            <iconify-icon icon="lucide:github" class="contact-icon text-3xl text-caramel"></iconify-icon>
-            <span class="contact-label font-mono text-xs uppercase tracking-widest text-ink">GitHub</span>
-            <span class="contact-id font-mono text-[11px] text-ink-soft break-all">@{identity.handle}</span>
-          </a>
-          <a
-            href={identity.linkedinUrl}
-            target="_blank"
-            rel="noopener"
-            class="contact-tile linkedin p-4 flex flex-col items-center justify-center gap-2 cursor-pointer text-center"
-          >
-            <iconify-icon icon="lucide:linkedin" class="contact-icon text-3xl text-caramel"></iconify-icon>
-            <span class="contact-label font-mono text-xs uppercase tracking-widest text-ink">LinkedIn</span>
-            <span class="contact-id font-mono text-[11px] text-ink-soft break-all">Marc-Aurel Ahouandjinou</span>
-          </a>
-          <a
-            href={identity.wakatimeUrl}
-            target="_blank"
-            rel="noopener"
-            class="contact-tile p-4 flex flex-col items-center justify-center gap-2 cursor-pointer text-center"
-          >
-            <iconify-icon icon="lucide:clock" class="contact-icon text-3xl text-caramel"></iconify-icon>
-            <span class="contact-label font-mono text-xs uppercase tracking-widest text-ink">WakaTime</span>
-            <span class="contact-id font-mono text-[11px] text-ink-soft break-all">@marcaurel</span>
-          </a>
-          <a
-            href={`tel:${identity.phone.replace(/\s/g, "")}`}
-            class="contact-tile p-4 flex flex-col items-center justify-center gap-2 cursor-pointer text-center"
-          >
-            <iconify-icon icon="lucide:phone" class="contact-icon text-3xl text-caramel"></iconify-icon>
-            <span class="contact-label font-mono text-xs uppercase tracking-widest text-ink">Phone</span>
-            <span class="contact-id font-mono text-[11px] text-ink-soft">{identity.phone}</span>
-          </a>
-        </footer>
+        </div>
       </main>
     </div>
 

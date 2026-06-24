@@ -232,19 +232,19 @@ const skills: Record<Variant, { label: string; items: string[] }[]> = {
   vue: [
     {
       label: "Core",
-      items: ["Vue 3", "Nuxt 3", "Composition API", "Pinia", "Vue Router", "TypeScript", "JavaScript"],
+      items: ["Vue 3", "Nuxt 3", "Pinia", "TypeScript", "JavaScript"],
     },
     {
       label: "Style & UI",
-      items: ["Tailwind CSS", "Figma to code", "Responsive design", "Animations CSS"],
+      items: ["Tailwind CSS", "Figma"],
     },
     {
       label: "Outils & Plateformes",
-      items: ["Vite", "Git / GitHub / GitLab", "Vercel", "Firebase", "WebSocket", "Astro"],
+      items: ["Vite", "Git / GitHub / GitLab", "Vercel", "Firebase", "Supabase", "WebSocket", "Astro"],
     },
     {
       label: "Intégration",
-      items: ["API REST", "Axios", "JWT auth", "Chart.js", "WebGL (OGL)"],
+      items: ["API REST", "Axios", "JWT auth"],
     },
   ],
   react: [
@@ -254,11 +254,11 @@ const skills: Record<Variant, { label: string; items: string[] }[]> = {
     },
     {
       label: "Style & UI",
-      items: ["Tailwind CSS", "Radix UI / shadcn", "Motion (Framer)", "Figma to code", "Responsive design"],
+      items: ["Tailwind CSS", "Radix UI / shadcn", "Motion (Framer)", "Figma"],
     },
     {
       label: "Backend & Data",
-      items: ["Prisma ORM", "Auth (Clerk, JWT, bcrypt)", "Nodemailer", "API REST", "WebSocket"],
+      items: ["Prisma ORM", "Auth (Clerk, JWT, bcrypt)", "Nodemailer", "API REST", "WebSocket", "Supabase"],
     },
     {
       label: "Outils & Plateformes",
