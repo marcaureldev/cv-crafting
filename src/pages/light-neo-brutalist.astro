@@ -197,6 +197,16 @@ const skillIcon: Record<string, string> = {
         border-radius: 0;
         box-shadow: none;
       }
+      /* En mode print (Viewport=false) la largeur de mise en page = celle de la
+         feuille A4, souvent < au breakpoint `md` de Tailwind. On force donc la
+         grille 2 colonnes pour ne pas retomber sur l'empilement mobile. */
+      html.pdf-export-mode .cv-grid { grid-template-columns: repeat(12, minmax(0, 1fr)); }
+      html.pdf-export-mode .cv-aside {
+        grid-column: span 4 / span 4;
+        border-bottom: none;
+        border-right: 1px solid var(--ink-border);
+      }
+      html.pdf-export-mode .cv-main { grid-column: span 8 / span 8; }
     </style>
   </head>
 
@@ -250,9 +260,9 @@ const skillIcon: Record<string, string> = {
           </div>
         </header>
 
-        <div class="grid grid-cols-1 md:grid-cols-12">
+        <div class="cv-grid grid grid-cols-1 md:grid-cols-12">
           <aside
-            class="md:col-span-4 p-5 flex flex-col gap-7 border-b md:border-b-0 md:border-r border-ink-border"
+            class="cv-aside md:col-span-4 p-5 flex flex-col gap-7 border-b md:border-b-0 md:border-r border-ink-border"
           >
             <!-- Profil -->
             <section>
@@ -332,7 +342,7 @@ const skillIcon: Record<string, string> = {
           </aside>
 
           <!-- ─── MAIN ─── -->
-          <div class="md:col-span-8 flex flex-col">
+          <div class="cv-main md:col-span-8 flex flex-col">
             <!-- Projets -->
             <section data-pdf-break="projects" class="border-b border-ink-border">
               <h3 class="sec-title p-4">
