@@ -82,6 +82,11 @@ export const POST: APIRoute = async ({ request }) => {
     MarginBottom: body.margins.bottom,
     MarginLeft: body.margins.left,
     ConversionScale: body.scale,
+    // Viewport=false => ConvertAPI utilise le moteur "Chrome print to PDF" :
+    // le contenu est mis en page directement à la largeur de la feuille (A4),
+    // au lieu d'être rendu dans un viewport large puis réduit (ce qui rapetissait
+    // le texte et laissait un vide en bas). WYSIWYG, taille réelle.
+    Viewport: false,
     // Attendre que les fonts fontshare/googleapis et les icônes Iconify (Web Components) soient rendues.
     ConversionDelay: 2,
   };
